@@ -15,51 +15,61 @@ class Note {
         }
 
         element.addEventListener('dblclick', (evt) => {
-            this.editNote(element);
+            element.setAttribute('contenteditable', 'true');
+            element.removeAttribute('draggable');
+            element.closest('.column').removeAttribute('draggable');
+            element.focus();
         });
 
 
-        element.addEventListener('contextmenu', (evt) => {
-            evt.preventDefault();
-
-            if (document.querySelector('.right-menu')) {
-                document.querySelector('.right-menu').remove();
-            }
-
-            const rightMenu = document.createElement('div');
-            rightMenu.classList.add('right-menu');
-            element.append(rightMenu);
-            const editSpanMenu = document.createElement('span');
-            editSpanMenu.textContent = 'Редактировать';
-            rightMenu.append(editSpanMenu);
-            const deleteSpanMenu = document.createElement('span');
-            deleteSpanMenu.textContent = 'Удалить';
-            rightMenu.append(deleteSpanMenu);
-            rightMenu.style = 'top:' + evt.pageY + 'px; left:' + evt.pageX + 'px;';
-
-            editSpanMenu.addEventListener('click', () => {
-                this.editNote(element);
-                rightMenu.remove();
-            });
-
-            deleteSpanMenu.addEventListener('click', () => {
-                element.remove();
-            });
-
-            document.addEventListener('click', () => {
-                rightMenu.remove();
-            });
-        });
+        // element.addEventListener('contextmenu', (evt) => {
+        //     evt.preventDefault();
+        //
+        //     if (document.querySelector('.right-menu')) {
+        //         document.querySelector('.right-menu').remove();
+        //     }
+        //
+        //     const rightMenu = document.createElement('div');
+        //     rightMenu.classList.add('right-menu');
+        //     element.append(rightMenu);
+        //     const editSpanMenu = document.createElement('span');
+        //     editSpanMenu.textContent = 'Редактировать';
+        //     rightMenu.append(editSpanMenu);
+        //     const deleteSpanMenu = document.createElement('span');
+        //     deleteSpanMenu.textContent = 'Удалить';
+        //     rightMenu.append(deleteSpanMenu);
+        //     rightMenu.style = 'top:' + evt.pageY + 'px; left:' + evt.pageX + 'px;';
+        //
+        //     editSpanMenu.addEventListener('click', () => {
+        //         this.editNote(element);
+        //         rightMenu.remove();
+        //     });
+        //
+        //     deleteSpanMenu.addEventListener('click', () => {
+        //         element.remove();
+        //     });
+        //
+        //     document.addEventListener('click', () => {
+        //         rightMenu.remove();
+        //     });
+        // });
 
         element.addEventListener('blur', (evt) => {
-            this.editCard(element);
+            element.removeAttribute('contenteditable');
+            element.setAttribute('draggable', 'true');
+            element.closest('.column').setAttribute('draggable', 'true');
+            if (!element.textContent.trim().length) {
+                element.remove();
+            }
+            App.save();
         });
 
-        element.addEventListener('keydown', (evt) => {
-            if (evt.keyCode === 13) {
-                this.editCard(element);
-            }
-        });
+        // element.addEventListener('keydown', (evt) => {
+        //     if (evt.keyCode === 13) {
+        //         this.editCard(element);
+        //         Note.IdCounter++;
+        //     }
+        // });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
         element.addEventListener('dragend', this.dragend.bind(this));
@@ -69,22 +79,22 @@ class Note {
         element.addEventListener('drop', this.drop.bind(this));
     }
 
-    editNote (element) {
-        element.setAttribute('contenteditable', 'true');
-        element.removeAttribute('draggable');
-        element.closest('.column').removeAttribute('draggable');
-        element.focus();
-    }
+    // editNote (element) {
+    //     element.setAttribute('contenteditable', 'true');
+    //     element.removeAttribute('draggable');
+    //     element.closest('.column').removeAttribute('draggable');
+    //     element.focus();
+    // }
 
-    editCard (element) {
-        element.removeAttribute('contenteditable');
-        element.setAttribute('draggable', 'true');
-        element.closest('.column').setAttribute('draggable', 'true');
-        if (!element.textContent.trim().length) {
-            element.remove();
-        }
-        App.save();
-    }
+    // editCard (element) {
+    //     element.removeAttribute('contenteditable');
+    //     element.setAttribute('draggable', 'true');
+    //     element.closest('.column').setAttribute('draggable', 'true');
+    //     if (!element.textContent.trim().length) {
+    //         element.remove();
+    //     }
+    //     App.save();
+    // }
 
     dragstart(evt) {
         evt.stopPropagation();
@@ -146,5 +156,5 @@ class Note {
     }
 }
 
-Note.IdCounter = 1;
+Note.IdCounter = 0;
 Note.dragged = null;
