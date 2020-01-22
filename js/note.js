@@ -1,14 +1,28 @@
 class Note {
-    constructor(id = null, content = '') {
+    constructor(id = null, title = '', content = '') {
 
         const element = this.element = document.createElement('div');
 
         element.classList.add('note');
         element.setAttribute('draggable', 'true');
-        element.textContent = content;
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = 'Заголовок:';
+        element.append(titleSpan);
+        const elementTitle = document.createElement('div');
+        elementTitle.classList.add('note__title');
+        elementTitle.textContent = title;
+        element.append(elementTitle);
+        const descriptionSpan = document.createElement('span');
+        descriptionSpan.textContent = 'Описание:';
+        element.append(descriptionSpan);
+        const elementDescription = document.createElement('div');
+        elementDescription.classList.add('note__description');
+        element.append(elementDescription);
+        elementDescription.textContent = content;
 
         if (id) {
             element.setAttribute('data-note-id', id);
+            Note.IdCounter++;
         } else {
             element.setAttribute('data-note-id', Note.IdCounter);
             Note.IdCounter++;
@@ -63,6 +77,7 @@ class Note {
             element.removeAttribute('contenteditable');
             element.setAttribute('draggable', 'true');
             element.closest('.column').setAttribute('draggable', 'true');
+            //Надо условие если и заголовок и дескрипш пустой удалять карточку
             if (!element.textContent.trim().length) {
                 element.remove();
             }

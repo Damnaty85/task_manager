@@ -30,7 +30,8 @@ const App = {
             .forEach(noteElement => {
                const note = {
                    id: parseInt(noteElement.getAttribute('data-note-id')),
-                   content: noteElement.textContent
+                   title: noteElement.querySelector('.note__title').textContent,
+                   content: noteElement.querySelector('.note__description').textContent
                };
 
                 object.notes.items.push(note)
@@ -57,8 +58,8 @@ const App = {
             clearColumn.append(column.element);
 
             for (const noteId of noteIds) {
-                const {id , content} = getNoteById(noteId);
-                const note = new Note(id, content);
+                const {id, title, content} = getNoteById(noteId);
+                const note = new Note(id, title, content);
                 column.add(note);
             }
         }
