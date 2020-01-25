@@ -1,5 +1,5 @@
 class Column {
-    constructor (id = null, title) {
+    constructor (id = null, title = '') {
         const instance = this;
         this.notes = [];
 
@@ -38,8 +38,10 @@ class Column {
             const note = new Note;
             instance.add(note);
 
-            note.element.setAttribute('contenteditable', 'true');
-            note.element.focus();
+            const noteTitle = note.element.querySelector('.note__title');
+
+            noteTitle.setAttribute('contenteditable', 'true');
+            noteTitle.focus();
 
         });
 
@@ -64,6 +66,12 @@ class Column {
 
         headerElement.addEventListener('blur', (evt) => {
             headerElement.removeAttribute('contenteditable');
+
+            if (!headerElement.textContent.trim().length) {
+                element.remove();
+            }
+
+            App.save();
         });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
@@ -147,6 +155,7 @@ class Column {
                     .insertBefore(Column.dragged, this.element.nextElementSibling);
             }
         }
+        this.element.classList.remove('under');
     }
 }
 

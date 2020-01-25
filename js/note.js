@@ -5,8 +5,14 @@ class Note {
 
         element.classList.add('note');
         element.setAttribute('draggable', 'true');
+
+        //создаем календарь из модуля calendar.js
+        const date = new Calendar;
+        element.append(date.element);
+        //создаем структуру карточки задачи
         const titleSpan = document.createElement('span');
         titleSpan.textContent = 'Заголовок:';
+        titleSpan.setAttribute('contenteditable', 'false');
         element.append(titleSpan);
         const elementTitle = document.createElement('div');
         elementTitle.classList.add('note__title');
@@ -14,22 +20,26 @@ class Note {
         element.append(elementTitle);
         const descriptionSpan = document.createElement('span');
         descriptionSpan.textContent = 'Описание:';
+        descriptionSpan.setAttribute('contenteditable', 'false');
         element.append(descriptionSpan);
         const elementDescription = document.createElement('div');
         elementDescription.classList.add('note__description');
         element.append(elementDescription);
         elementDescription.textContent = content;
+        //создаем таймер из модуля timer.js
+        const timer = new Timer;
+        element.append(timer.element);
 
         if (id) {
             element.setAttribute('data-note-id', id);
-            Note.IdCounter++;
         } else {
             element.setAttribute('data-note-id', Note.IdCounter);
             Note.IdCounter++;
         }
 
         element.addEventListener('dblclick', (evt) => {
-            element.setAttribute('contenteditable', 'true');
+            elementTitle.setAttribute('contenteditable', 'true');
+            elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.column').removeAttribute('draggable');
             element.focus();
@@ -46,6 +56,9 @@ class Note {
             const rightMenu = document.createElement('div');
             rightMenu.classList.add('right-menu');
             element.append(rightMenu);
+            const detailSpanMenu = document.createElement('span');
+            detailSpanMenu.textContent = 'Просмотреть';
+            rightMenu.append(detailSpanMenu);
             const editSpanMenu = document.createElement('span');
             editSpanMenu.textContent = 'Редактировать';
             rightMenu.append(editSpanMenu);
@@ -55,10 +68,11 @@ class Note {
             rightMenu.style = 'top:' + evt.pageY + 'px; left:' + evt.pageX + 'px;';
 
             editSpanMenu.addEventListener('click', () => {
-                element.setAttribute('contenteditable', 'true');
+                elementTitle.setAttribute('contenteditable', 'true');
+                elementDescription.setAttribute('contenteditable', 'true');
                 element.removeAttribute('draggable');
                 element.closest('.column').removeAttribute('draggable');
-                element.focus();
+                elementTitle.focus();
                 rightMenu.remove();
                 App.save()
             });
@@ -73,15 +87,18 @@ class Note {
             });
         });
 
-        element.addEventListener('blur', (evt) => {
-            element.removeAttribute('contenteditable');
-            element.setAttribute('draggable', 'true');
-            element.closest('.column').setAttribute('draggable', 'true');
-            //Надо условие если и заголовок и дескрипш пустой удалять карточку
-            if (!element.textContent.trim().length) {
-                element.remove();
-            }
-            App.save();
+        elementTitle.addEventListener('blur', () => {
+            elementTitle.removeAttribute('contenteditable');
+            elementDescription.removeAttribute('contenteditable');
+
+            this.checkForEmptiness(elementTitle, element);
+        });
+
+        elementDescription.addEventListener('blur', () => {
+            elementTitle.removeAttribute('contenteditable');
+            elementDescription.removeAttribute('contenteditable');
+
+            this.checkForEmptiness(elementDescription, element);
         });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
@@ -90,6 +107,16 @@ class Note {
         element.addEventListener('dragover', this.dragover.bind(this));
         element.addEventListener('dragleave', this.dragleave.bind(this));
         element.addEventListener('drop', this.drop.bind(this));
+    }
+
+    checkForEmptiness (elementName, element) {
+        element.setAttribute('draggable', 'true');
+        element.closest('.column').setAttribute('draggable', 'true');
+
+        if (!elementName.textContent.trim().length) {
+            element.remove();
+        }
+        App.save();
     }
 
     dragstart(evt) {
@@ -152,5 +179,5 @@ class Note {
     }
 }
 
-Note.IdCounter = 0;
+Note.IdCounter = 1;
 Note.dragged = null;
