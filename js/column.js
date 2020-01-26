@@ -27,7 +27,7 @@ class Column {
         const columnFooter = document.createElement('p');
         columnFooter.classList.add('column-footer');
         element.append(columnFooter);
-        columnFooter.innerHTML = '<span data-action-addNote class="action"> + Добавить карточку</span>';
+        columnFooter.innerHTML = '<span data-action-addNote class="action"> + Создать задачу</span>';
 
 
         element.querySelector('.column-header').textContent = title;
