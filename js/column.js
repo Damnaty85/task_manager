@@ -4,7 +4,7 @@ class Column {
         this.notes = [];
 
         const element = this.element = document.createElement('div');
-        element.classList.add('column');
+        element.classList.add('task-manager__column');
         element.setAttribute('draggable', 'true');
 
         if (id) {
@@ -15,22 +15,22 @@ class Column {
         }
 
         const deleteElement = document.createElement('span');
-        deleteElement.classList.add('column-close');
+        deleteElement.classList.add('column__close');
         deleteElement.textContent = '+';
         element.append(deleteElement);
         const columnHeader = document.createElement('p');
-        columnHeader.classList.add('column-header');
+        columnHeader.classList.add('column__header');
         element.append(columnHeader);
         const noteWrap = document.createElement('div');
-        noteWrap.classList.add('note-wrap');
+        noteWrap.classList.add('task-manager__note');
         element.append(noteWrap);
         const columnFooter = document.createElement('p');
-        columnFooter.classList.add('column-footer');
+        columnFooter.classList.add('column__footer');
         element.append(columnFooter);
         columnFooter.innerHTML = '<span data-action-addNote class="action"> + Создать задачу</span>';
 
 
-        element.querySelector('.column-header').textContent = title;
+        element.querySelector('.column__header').textContent = title;
 
         const spanActionAddNote = element.querySelector('[data-action-addNote]');
 
@@ -45,7 +45,7 @@ class Column {
 
         });
 
-        const deleteColumn = element.querySelector('.column-close');
+        const deleteColumn = element.querySelector('.column__close');
 
         deleteColumn.addEventListener('click',() => {
             element.classList.add('delete-column');
@@ -55,7 +55,7 @@ class Column {
             }, 500);
         });
 
-        const headerElement = element.querySelector('.column-header');
+        const headerElement = element.querySelector('.column__header');
 
         headerElement.addEventListener('dblclick', (evt) => {
             headerElement.setAttribute('contenteditable', 'true');
@@ -87,7 +87,7 @@ class Column {
             if (!this.notes.includes(note)) {
                 this.notes.push(note);
 
-                this.element.querySelector('.note-wrap').append(note.element);
+                this.element.querySelector('.task-manager__note').append(note.element);
             }
         }
     }
@@ -117,23 +117,23 @@ class Column {
     dragenter(evt) {
         evt.stopPropagation();
         if (!Column.dragged || Column.dragged === this.element) {
-            return
+            return false;
         }
-        this.element.classList.add('under');
+        this.element.classList.add('_under');
     }
 
     dragleave(evt) {
         evt.stopPropagation();
         if (!Column.dragged || Column.dragged === this.element) {
-            return
+            return false;
         }
-        this.element.classList.remove('under');
+        this.element.classList.remove('_under');
     }
 
     dragover(evt) {
         evt.preventDefault();
         if (!Column.dragged || Column.dragged === this.element) {
-            return
+            return false;
         }
     }
 
@@ -141,21 +141,21 @@ class Column {
         evt.stopPropagation();
 
         if (Note.dragged) {
-            return this.element.querySelector('.note-wrap').append(Note.dragged);
+            return this.element.querySelector('.task-manager__note').append(Note.dragged);
         } else if (Column.dragged) {
-            const children = Array.from(document.querySelector('.columns').children);
+            const children = Array.from(document.querySelector('.task-manager__list').children);
             const indexThis = children.indexOf(this.element);
             const indexDragged = children.indexOf(Column.dragged);
 
             if (indexThis < indexDragged) {
-                document.querySelector('.columns')
+                document.querySelector('.task-manager__list')
                     .insertBefore(Column.dragged, this.element);
             } else {
-                document.querySelector('.columns')
+                document.querySelector('.task-manager__list')
                     .insertBefore(Column.dragged, this.element.nextElementSibling);
             }
         }
-        this.element.classList.remove('under');
+        this.element.classList.remove('_under');
     }
 }
 

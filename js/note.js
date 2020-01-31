@@ -10,10 +10,6 @@ class Note {
         const date = new Calendar;
         element.append(date.element);
         //создаем структуру карточки задачи
-        const titleSpan = document.createElement('span');
-        titleSpan.textContent = 'Заголовок:';
-        titleSpan.setAttribute('contenteditable', 'false');
-        element.append(titleSpan);
         const elementTitle = document.createElement('div');
         elementTitle.classList.add('note__title');
         elementTitle.textContent = title;
@@ -41,7 +37,7 @@ class Note {
             elementTitle.setAttribute('contenteditable', 'true');
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
-            element.closest('.column').removeAttribute('draggable');
+            element.closest('.task-manager__column').removeAttribute('draggable');
             element.focus();
         });
 
@@ -71,7 +67,7 @@ class Note {
                 elementTitle.setAttribute('contenteditable', 'true');
                 elementDescription.setAttribute('contenteditable', 'true');
                 element.removeAttribute('draggable');
-                element.closest('.column').removeAttribute('draggable');
+                element.closest('.task-manager__column').removeAttribute('draggable');
                 elementTitle.focus();
                 rightMenu.remove();
                 App.save()
@@ -111,7 +107,7 @@ class Note {
 
     checkForEmptiness (elementName, element) {
         element.setAttribute('draggable', 'true');
-        element.closest('.column').setAttribute('draggable', 'true');
+        element.closest('.task-manager__column').setAttribute('draggable', 'true');
 
         if (!elementName.textContent.trim().length) {
             element.remove();

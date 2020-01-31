@@ -11,11 +11,11 @@ const App = {
             }
         };
 
-        document.querySelectorAll('.column')
+        document.querySelectorAll('.task-manager__column')
             .forEach(columnElement => {
                 const column = {
                     id: parseInt(columnElement.getAttribute('data-column-id')),
-                    title: columnElement.querySelector('.column-header').textContent,
+                    title: columnElement.querySelector('.column__header').textContent,
                     noteIds: []
                 };
                 columnElement.querySelectorAll('.note')
@@ -46,7 +46,7 @@ const App = {
         if (!localStorage.getItem('Task Manager')) {
             return;
         }
-        const clearColumn = document.querySelector('.columns');
+        const clearColumn = document.querySelector('.task-manager__list');
         clearColumn.innerHTML = '';
 
         const object = JSON.parse(localStorage.getItem('Task Manager'));
