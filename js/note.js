@@ -3,7 +3,7 @@ class Note {
 
         const element = this.element = document.createElement('div');
 
-        element.classList.add('note');
+        element.classList.add('task-manager__note-wrap');
         element.setAttribute('draggable', 'true');
 
         //создаем календарь из модуля calendar.js
@@ -26,12 +26,17 @@ class Note {
         const timer = new Timer;
         element.append(timer.element);
 
+
+
         if (id) {
             element.setAttribute('data-note-id', id);
         } else {
             element.setAttribute('data-note-id', Note.IdCounter);
             Note.IdCounter++;
         }
+
+        //валидация заголовка
+        new Validation(elementTitle,  28);
 
         element.addEventListener('dblclick', (evt) => {
             elementTitle.setAttribute('contenteditable', 'true');
@@ -103,6 +108,8 @@ class Note {
         element.addEventListener('dragover', this.dragover.bind(this));
         element.addEventListener('dragleave', this.dragleave.bind(this));
         element.addEventListener('drop', this.drop.bind(this));
+
+
     }
 
     checkForEmptiness (elementName, element) {
@@ -125,7 +132,7 @@ class Note {
         evt.stopPropagation();
         Note.dragged = null;
         this.element.classList.remove('dragged');
-        document.querySelectorAll('.note')
+        document.querySelectorAll('.task-manager__note-wrap')
             .forEach(element => element.classList.remove('under'));
 
         App.save();
@@ -141,7 +148,7 @@ class Note {
     dragover(evt) {
         evt.preventDefault();
         if (!Note.dragged || this.element === Note.dragged) {
-            return;
+
         }
     }
 
@@ -160,7 +167,7 @@ class Note {
         }
 
         if (this.element.parentElement === Note.dragged.parentElement) {
-            const note = Array.from(this.element.parentElement.querySelectorAll('.note'));
+            const note = Array.from(this.element.parentElement.querySelectorAll('.task-manager__note-wrap'));
             const indexThis = note.indexOf(this.element);
             const indexDragged = note.indexOf(Note.dragged);
 

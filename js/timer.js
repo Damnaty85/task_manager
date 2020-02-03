@@ -1,5 +1,6 @@
 class Timer {
-    constructor () {
+    constructor (timeDisplay = null, completeButton = null, startButton = null, timer = null, now = 0) {
+
         const element = this.element = document.createElement('div');
 
         element.classList.add('timer__wrap');
@@ -9,68 +10,80 @@ class Timer {
             '<span>Затраченое время</span>' +
             '<div id="timeDisplay">00:00:00</div>\n' +
             '<div class="button__wrap">\n' +
-            '<input type="button" value="Завершить" id="resetButton" disabled/>\n' +
+            '<input type="button" value="Завершить" id="completeButton" disabled/>\n' +
             '<input type="button" value="Начать" id="startButton" disabled/>\n' +
             '</div>\n' +
             '</div>';
 
-        const stopWatch = {
-            timeDisplay : null,
-            resetButton : null,
-            startButton : null,
-            timer : null,
-            now : 0,
+        timeDisplay = element.querySelector("#timeDisplay");
+        completeButton = element.querySelector("#completeButton");
+        startButton = element.querySelector("#startButton");
 
-            init : function () {
-                stopWatch.timeDisplay = element.querySelector("#timeDisplay");
-                stopWatch.resetButton = element.querySelector("#resetButton");
-                stopWatch.startButton = element.querySelector("#startButton");
+        completeButton.addEventListener("click", complete);
+        completeButton.disabled = false;
+        startButton.addEventListener("click", start);
+        startButton.disabled = false;
 
-                stopWatch.resetButton.addEventListener("click", stopWatch.complete);
-                stopWatch.resetButton.disabled = false;
-                stopWatch.startButton.addEventListener("click", stopWatch.start);
-                stopWatch.startButton.disabled = false;
-            },
+        function tick () {
+            now++;
+            let remain = now;
+            let hours = Math.floor(remain / 3600);
+            remain -= hours * 3600;
+            let mins = Math.floor(remain / 60);
+            remain -= mins * 60;
+            let secs = remain;
 
-            tick : function () {
-                stopWatch.now++;
-                let remain = stopWatch.now;
-                let hours = Math.floor(remain / 3600);
-                remain -= hours * 3600;
-                let mins = Math.floor(remain / 60);
-                remain -= mins * 60;
-                let secs = remain;
+            if (hours < 10) { hours = "0" + hours; }
+            if (mins < 10) { mins = "0" + mins; }
+            if (secs < 10) { secs = "0" + secs; }
+            timeDisplay.innerHTML = hours + ":" + mins + ":" + secs;
+        }
 
-                if (hours < 10) { hours = "0" + hours; }
-                if (mins < 10) { mins = "0" + mins; }
-                if (secs < 10) { secs = "0" + secs; }
-                stopWatch.timeDisplay.innerHTML = hours + ":" + mins + ":" + secs;
-            },
+        function  start () {
+            timer = setInterval(tick, 1000);
+            startButton.value = "Стоп";
+            startButton.removeEventListener("click", start);
+            startButton.addEventListener("click", stop);
+        }
 
-            start : function () {
-                stopWatch.timer = setInterval(stopWatch.tick, 1000);
-                stopWatch.startButton.value = "Стоп";
-                stopWatch.startButton.removeEventListener("click", stopWatch.start);
-                stopWatch.startButton.addEventListener("click", stopWatch.stop);
-            },
+        function stop () {
+            clearInterval(timer);
+            timer = null;
+            startButton.value = "Начать";
+            startButton.removeEventListener("click", stop);
+            startButton.addEventListener("click", start);
+        }
 
-            stop  : function () {
-                clearInterval(stopWatch.timer);
-                stopWatch.timer = null;
-                stopWatch.startButton.value = "Начать";
-                stopWatch.startButton.removeEventListener("click", stopWatch.stop);
-                stopWatch.startButton.addEventListener("click", stopWatch.start);
-            },
+        function complete () {
+            clearInterval(timer);
+            timer = null;
+            startButton.style.display = 'none';
+            completeButton.value = "Восстановить";
+            completeButton.style.backgroundColor = '#006978';
+            completeButton.addEventListener('mouseenter', () => {
+                completeButton.style.backgroundColor = '#00838f';
+            });
+            completeButton.addEventListener('mouseleave', () => {
+                completeButton.style.backgroundColor = '#006978';
+            });
+            startButton.removeEventListener("click", stop);
+            completeButton.addEventListener('click', recovery);
+        }
 
-            complete  : function () {
-                clearInterval(stopWatch.timer);
-                stopWatch.timer = null;
-                stopWatch.startButton.remove();
-                stopWatch.resetButton.value = "Восстановить";
-                stopWatch.startButton.removeEventListener("click", stopWatch.stop);
-            }
-        };
-
-        window.addEventListener("load", stopWatch.init);
+        function recovery() {
+            timer = null;
+            completeButton.value = "Завершить";
+            startButton.value = "Начать";
+            startButton.style.display = 'inline-flex';
+            completeButton.style.backgroundColor = '#d32f2f';
+            completeButton.addEventListener('mouseenter', () => {
+                completeButton.style.backgroundColor = '#e53935';
+            });
+            completeButton.addEventListener('mouseleave', () => {
+                completeButton.style.backgroundColor = '#d32f2f';
+            });
+            completeButton.removeEventListener('click', recovery);
+            startButton.addEventListener("click", start);
+        }
     }
 }

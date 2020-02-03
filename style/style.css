@@ -5,11 +5,16 @@
 body {
     margin: 0;
     background-color: #ffffff;
-    font-family: 'Oswald', sans-serif;
+    font-family: 'Roboto Mono', monospace;
 }
 
-h1{
+h1 {
     color: #131313;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    margin-top: -15px;
 }
 
 .task-manager {
@@ -62,6 +67,23 @@ h1{
     border-left: 1px solid #8080801f;
 }
 
+.task-manager__column:hover > span.column__close{
+    opacity: 1;
+}
+
+.task-manager__column.dragged {
+    opacity: 0.8;
+}
+
+.task-manager__column._under {
+    margin-top: 20px;
+}
+.task-manager__column._under > span.column__close,
+.task-manager__column._under > .column__header,
+.task-manager__column._under > .column__body{
+    pointer-events: none;
+}
+
 span.column__close {
     position: absolute;
     top: 0;
@@ -73,10 +95,6 @@ span.column__close {
     opacity: 0;
     transition: 0.2s;
     color: black;
-}
-
-.task-manager__column:hover > span.column__close{
-    opacity: 1;
 }
 
 .column__header {
@@ -92,6 +110,51 @@ span.column__close {
     background-color: #ffffff;
     min-height: 46px;
     outline: none;
+}
+
+.column__header:before {
+    content: '';
+    width: 100%;
+    position: absolute;
+    top: 110%;
+    height: 3px;
+    background-color: #0000000a;
+}
+
+.error__message {
+    position: absolute;
+    top: 80px;
+    background-color: #fdfdfd;
+    font-size: 16px;
+    padding: 5px;
+    left: 0;
+    box-shadow: 2px 5px 11px #0000006b;
+    color: #000000b3;
+    font-weight: 300;
+    border: 1px solid #0000006b;
+    z-index: 13;
+    opacity: 0;
+    transition: 0.8s;
+    width: 100%;
+}
+
+.error__message._show--message{
+    opacity: 1;
+}
+
+.error__message:before {
+    content: '';
+    border: 13px solid transparent;
+    border-bottom: 10px solid #fdfdfd;
+    filter: drop-shadow(0px -1px 0px #0000006b);
+    position: absolute;
+    top: -22px;
+    left: 22px;
+}
+
+.column__body {
+    margin-top: 30px;
+    position: relative;
 }
 
 .column__footer {
@@ -118,30 +181,12 @@ span.column__close {
     color: white;
 }
 
-.task-manager__column.dragged {
-    opacity: 0.8;
-}
-
-.task-manager__column._under {
-    margin-top: 20px;
-}
-.task-manager__column._under > span.column__close,
-.task-manager__column._under > .column__header,
-.task-manager__column._under > .task-manager__note{
-    pointer-events: none;
-}
-
 .delete-column {
     margin-top: 60px;
     opacity: 0;
 }
 
-.task-manager__note {
-    margin-top: 50px;
-    position: relative;
-}
-
-.note {
+.task-manager__note-wrap {
     cursor: default;
     width: 100%;
     background: #fbfbfb;
@@ -162,12 +207,12 @@ span.column__close {
     border-bottom: 1px solid #006978;
 }
 
-.note:hover {
+.task-manager__note-wrap:hover {
 	background-color: #bfe4ff;
     cursor: pointer;
 }
 
-.note span {
+.task-manager__note-wrap span {
     padding-bottom: 3px;
 }
 
@@ -178,8 +223,7 @@ span.column__close {
     margin-bottom: 35px;
     outline: none;
     background-color: #006978;
-    z-index: 1;
-    font-size: 20px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     color: white;
@@ -205,7 +249,10 @@ span.column__close {
     margin-bottom: 5px;
     outline: none;
     line-height: 24px;
-    word-spacing: 7px;
+    word-spacing: 3px;
+    width: 100%;
+    resize: none;
+    overflow: hidden;
 }
 
 .note:focus {
@@ -278,7 +325,7 @@ span.column__close {
     justify-content: space-between;
     width: 100%;
     padding: 0 20px;
-    font-size: 16px;
+    font-size: 12px;
     background-color: white;
     color: black;
     cursor: default;
@@ -323,7 +370,7 @@ span.column__close {
     margin-top: 10px;
 }
 
-#resetButton,
+#completeButton,
 #startButton{
     display: inline-flex;
     width: 50%;
@@ -338,8 +385,17 @@ span.column__close {
     transition: 0.3s;
 }
 
-#resetButton:hover, #startButton:hover {
+#completeButton{
+    background-color: #d32f2f;
+    border: none;
+}
+
+#startButton:hover {
     background-color: #00838f;
+}
+
+#completeButton:hover{
+    background-color: #e53935;
 }
 
 .date-picker{
@@ -360,7 +416,7 @@ span.column__close {
     height: 100%;
     display: flex;
     color: #131313;
-    font-size: 16px;
+    font-size: 12px;
     align-items: center;
     justify-content: space-between;
     padding: 0 18px;
@@ -374,7 +430,7 @@ span.column__close {
     right: 0;
     background-color: #ffffff;
     width: 260px;
-    box-shadow: 2px 3px 4px grey;
+    box-shadow: -2px 18px 18px #0000009c;
 }
 
 .dates.active{
@@ -418,6 +474,15 @@ span.column__close {
     justify-content: center;
     align-items: center;
     color: #313131;
+}
+
+.week__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    color: black;
+    align-items: center;
+    justify-items: center;
+    margin: 5px 0;
 }
 
 .date-picker .days .day.selected{

@@ -18,7 +18,7 @@ const App = {
                     title: columnElement.querySelector('.column__header').textContent,
                     noteIds: []
                 };
-                columnElement.querySelectorAll('.note')
+                columnElement.querySelectorAll('.task-manager__note-wrap')
                     .forEach(noteElement => {
                         column.noteIds.push(parseInt(noteElement.getAttribute('data-note-id')))
                     });
@@ -26,7 +26,7 @@ const App = {
                 object.columns.items.push(column);
         });
 
-        document.querySelectorAll('.note')
+        document.querySelectorAll('.task-manager__note-wrap')
             .forEach(noteElement => {
                const note = {
                    id: parseInt(noteElement.getAttribute('data-note-id')),

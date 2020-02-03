@@ -14,6 +14,7 @@ class Calendar {
             '<div class="mth"></div>\n' +
             '<div class="arrows next-mth">&gt;</div>\n' +
             '</div>\n' +
+            '<div class="week__days"></div>\n' +
             '<div class="days"></div>\n' +
             '</div>\n' +
             '</div>';
@@ -25,14 +26,24 @@ class Calendar {
         const monthElement = element.querySelector('.month .mth');
         const nextMonthElement = element.querySelector('.month .next-mth');
         const prevMonthElement = element.querySelector('.month .prev-mth');
+        const weekDaysElement = element.querySelector('.week__days');
         const daysElement = element.querySelector('.days');
 
         const months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь','Декабрь'];
-
+        const weekdays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
         let date = new Date();
         let day = date.getDate();
+        // let weekDay = date.getDay();
         let month = date.getMonth();
         let year = date.getFullYear();
+
+        // определяем день недели по дате
+        function getWeekDay () {
+            return weekdays[date.getDay()];
+        }
+
+        // let dayWeek = new Date(year, month, day++);
+        // console.log(getWeekDay(dayWeek));
 
         let selectedDate = date;
         let selectedDay = day;
@@ -41,7 +52,7 @@ class Calendar {
 
         monthElement.textContent = months[month] + ', ' + year;
 
-        createDateElement.textContent = formatDate(date);
+        createDateElement.textContent = formatDate(date).toLocaleString();
         createDateElement.dataset.value = selectedDate;
 
         selectDateElement.textContent = formatDate(date);
@@ -83,6 +94,20 @@ class Calendar {
         function isLeapYear (year) {
             return year % 4 === 0 && ( year % 100 !== 0 || year % 400 === 0 )
         }
+
+        function createWeekDays() {
+            weekDaysElement.innerHTML = '';
+            let amountWeekDays = 7;
+
+            for (let j = 0; j < amountWeekDays; j++) {
+                const weekDayElement = document.createElement('div');
+                weekDayElement.classList.add('week__day');
+                weekDayElement.textContent = weekdays[j];
+                weekDaysElement.appendChild(weekDayElement);
+            }
+        }
+
+        // createWeekDays();
 
         function populateDates (evt) {
             daysElement.innerHTML = '';
@@ -149,6 +174,4 @@ class Calendar {
             return day + ' / ' + month + ' / ' +year;
         }
     }
-
-
 }

@@ -22,7 +22,7 @@ class Column {
         columnHeader.classList.add('column__header');
         element.append(columnHeader);
         const noteWrap = document.createElement('div');
-        noteWrap.classList.add('task-manager__note');
+        noteWrap.classList.add('column__body');
         element.append(noteWrap);
         const columnFooter = document.createElement('p');
         columnFooter.classList.add('column__footer');
@@ -57,10 +57,12 @@ class Column {
 
         const headerElement = element.querySelector('.column__header');
 
+        //валидация заголовка
+        new Validation(headerElement, 26);
+
         headerElement.addEventListener('dblclick', (evt) => {
             headerElement.setAttribute('contenteditable', 'true');
             headerElement.focus();
-
             App.save();
         });
 
@@ -87,7 +89,7 @@ class Column {
             if (!this.notes.includes(note)) {
                 this.notes.push(note);
 
-                this.element.querySelector('.task-manager__note').append(note.element);
+                this.element.querySelector('.column__body').append(note.element);
             }
         }
     }
@@ -97,7 +99,7 @@ class Column {
         Column.dragged = this.element;
         Column.dragged.classList.add('dragged');
 
-        document.querySelectorAll('.note')
+        document.querySelectorAll('.task-manager__note-wrap')
             .forEach(noteElement => noteElement
                 .removeAttribute('draggable'));
     }
@@ -107,7 +109,7 @@ class Column {
         Column.dragged.classList.remove('dragged');
         Column.dragged = null;
 
-        document.querySelectorAll('.note')
+        document.querySelectorAll('.task-manager__note-wrap')
             .forEach(noteElement => noteElement
                 .setAttribute('draggable', 'true'));
 
@@ -141,7 +143,7 @@ class Column {
         evt.stopPropagation();
 
         if (Note.dragged) {
-            return this.element.querySelector('.task-manager__note').append(Note.dragged);
+            return this.element.querySelector('.column__body').append(Note.dragged);
         } else if (Column.dragged) {
             const children = Array.from(document.querySelector('.task-manager__list').children);
             const indexThis = children.indexOf(this.element);
