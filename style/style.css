@@ -5,7 +5,7 @@
 body {
     margin: 0;
     background-color: #ffffff;
-    font-family: 'Roboto Mono', monospace;
+    font-family: 'Fira Code', monospace;
 }
 
 h1 {
@@ -62,12 +62,12 @@ h1 {
     padding: 10px 15px;
     position: relative;
     transition: 0.3s;
-    width: 390px;
+    width: 500px;
     border-right: 1px solid #8080801f;
     border-left: 1px solid #8080801f;
 }
 
-.task-manager__column:hover > span.column__close{
+.task-manager__column:hover > span.column__delete{
     opacity: 1;
 }
 
@@ -78,23 +78,36 @@ h1 {
 .task-manager__column._under {
     margin-top: 20px;
 }
-.task-manager__column._under > span.column__close,
+.task-manager__column._under > span.column__delete,
 .task-manager__column._under > .column__header,
 .task-manager__column._under > .column__body{
     pointer-events: none;
 }
 
-span.column__close {
+span.column__delete {
     position: absolute;
     top: 0;
     right: 5px;
-    font-size: 40px;
-    transform: rotate(45deg);
+    /*font-size: 40px;*/
+    /*transform: rotate(45deg);*/
     z-index: 9;
     cursor: pointer;
     opacity: 0;
-    transition: 0.2s;
     color: black;
+    font-size: 13px;
+    width: 30px;
+    height: 30px;
+    transition: 0.3s;
+}
+
+.column__delete img{
+    width: 100%;
+    height: 100%;
+    transition: 0.3s;
+}
+
+.column__delete:hover > img{
+    filter: drop-shadow(-1px 6px 5px grey);
 }
 
 .column__header {
@@ -127,7 +140,7 @@ span.column__close {
     background-color: #fdfdfd;
     font-size: 16px;
     padding: 5px;
-    left: 0;
+    left: 50px;
     box-shadow: 2px 5px 11px #0000006b;
     color: #000000b3;
     font-weight: 300;
@@ -186,6 +199,7 @@ span.column__close {
     opacity: 0;
 }
 
+
 .task-manager__note-wrap {
     cursor: default;
     width: 100%;
@@ -219,13 +233,13 @@ span.column__close {
 .note__title {
     padding: 0 10px 5px;
     min-height: 40px;
-    margin-top: 5px;
     margin-bottom: 35px;
     outline: none;
     background-color: #006978;
     font-size: 18px;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     color: white;
 }
 
@@ -253,6 +267,7 @@ span.column__close {
     width: 100%;
     resize: none;
     overflow: hidden;
+    border: none;
 }
 
 .note:focus {
@@ -324,7 +339,7 @@ span.column__close {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 20px;
+    padding: 5px 10px 0;
     font-size: 12px;
     background-color: white;
     color: black;
@@ -419,7 +434,7 @@ span.column__close {
     font-size: 12px;
     align-items: center;
     justify-content: space-between;
-    padding: 0 18px;
+    padding: 0 8px;
 }
 
 .date-picker .dates{
@@ -453,6 +468,47 @@ span.column__close {
     align-items: center;
     color: #313131;
     font-size: 20px;
+    position: relative;
+}
+
+.arrows.next-mth:after {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: black;
+    transform: rotate(45deg);
+    top: 12.5px;
+}
+
+.arrows.next-mth:before {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: black;
+    transform: rotate(-45deg);
+    bottom: 12.5px;
+}
+
+.arrows.prev-mth:before {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: black;
+    transform: rotate(45deg);
+    bottom: 12.5px;
+}
+
+.arrows.prev-mth:after {
+    content: '';
+    position: absolute;
+    width: 40%;
+    height: 1px;
+    background-color: black;
+    transform: rotate(-45deg);
+    top: 12.5px;
 }
 
 .dates .month .arrows:hover{
@@ -488,4 +544,35 @@ span.column__close {
 .date-picker .days .day.selected{
     background-color: #00838f;
     color: #F3F3F3;
+}
+
+.description__wrap span {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+    margin: 2px;
+    width: 40px;}
+
+.description__wrap {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.description__panel{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.description__panel button {
+    background-color: #fbfbfb;
+    border: none;
+    color: black;
+    padding: 10px;
+    border-right: 1px solid white;
+    width: 39px;
+    box-shadow: 0px 1px 3px grey;
+    margin: 2px;
 }

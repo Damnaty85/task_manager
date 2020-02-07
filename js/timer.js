@@ -36,6 +36,7 @@ class Timer {
             if (hours < 10) { hours = "0" + hours; }
             if (mins < 10) { mins = "0" + mins; }
             if (secs < 10) { secs = "0" + secs; }
+
             timeDisplay.innerHTML = hours + ":" + mins + ":" + secs;
         }
 
@@ -52,6 +53,8 @@ class Timer {
             startButton.value = "Начать";
             startButton.removeEventListener("click", stop);
             startButton.addEventListener("click", start);
+
+            App.save()
         }
 
         function complete () {
@@ -68,6 +71,8 @@ class Timer {
             });
             startButton.removeEventListener("click", stop);
             completeButton.addEventListener('click', recovery);
+
+            App.save()
         }
 
         function recovery() {

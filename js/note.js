@@ -10,6 +10,11 @@ class Note {
         const date = new Calendar;
         element.append(date.element);
         //создаем структуру карточки задачи
+        const titleSpan = document.createElement('span');
+        titleSpan.textContent = 'Заголовок:';
+        titleSpan.setAttribute('contenteditable', 'false');
+        titleSpan.style.color = 'white';
+        element.append(titleSpan);
         const elementTitle = document.createElement('div');
         elementTitle.classList.add('note__title');
         elementTitle.textContent = title;
@@ -18,14 +23,42 @@ class Note {
         descriptionSpan.textContent = 'Описание:';
         descriptionSpan.setAttribute('contenteditable', 'false');
         element.append(descriptionSpan);
+        const descriptionWrap = document.createElement('div');
+        descriptionWrap.classList.add('description__wrap');
+        element.append(descriptionWrap);
+        const editorPanel = document.createElement('div');
+        editorPanel.classList.add('description__panel');
+        descriptionWrap.append(editorPanel);
+        const buttonBold = document.createElement('button');
+        buttonBold.textContent = 'B';
+        buttonBold.style.fontWeight = 'bold';
+        editorPanel.append(buttonBold);
+        const buttonItalic = document.createElement('button');
+        buttonItalic.textContent = 'I';
+        buttonItalic.style.fontStyle = 'italic';
+        editorPanel.append(buttonItalic);
+        const buttonList = document.createElement('button');
+        buttonList.textContent = 'Ul';
+        editorPanel.append(buttonList);
         const elementDescription = document.createElement('div');
         elementDescription.classList.add('note__description');
-        element.append(elementDescription);
-        elementDescription.textContent = content;
+        descriptionWrap.append(elementDescription);
+        elementDescription.innerHTML = content;
         //создаем таймер из модуля timer.js
         const timer = new Timer;
         element.append(timer.element);
 
+        buttonBold.addEventListener('click', function () {
+            document.execCommand('Bold');
+        });
+
+        buttonItalic.addEventListener('click', function () {
+            document.execCommand('Italic');
+        });
+
+        buttonList.addEventListener('click', function () {
+            document.execCommand('insertUnorderedList');
+        });
 
 
         if (id) {
@@ -36,14 +69,20 @@ class Note {
         }
 
         //валидация заголовка
-        new Validation(elementTitle,  28);
+        new Validation(elementTitle,  28, 110);
 
-        element.addEventListener('dblclick', (evt) => {
+        elementTitle.addEventListener('dblclick', (evt) => {
             elementTitle.setAttribute('contenteditable', 'true');
+            element.removeAttribute('draggable');
+            element.closest('.task-manager__column').removeAttribute('draggable');
+            elementTitle.focus();
+        });
+
+        descriptionWrap.addEventListener('dblclick', (evt) => {
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.task-manager__column').removeAttribute('draggable');
-            element.focus();
+            elementDescription.focus();
         });
 
 
@@ -95,7 +134,7 @@ class Note {
             this.checkForEmptiness(elementTitle, element);
         });
 
-        elementDescription.addEventListener('blur', () => {
+        descriptionWrap.addEventListener('blur', () => {
             elementTitle.removeAttribute('contenteditable');
             elementDescription.removeAttribute('contenteditable');
 

@@ -10,9 +10,9 @@ class Calendar {
             '<div class="selected-date">Выполнить до: <span></span></div>\n' +
             '<div class="dates">\n' +
             '<div class="month">\n' +
-            '<div class="arrows prev-mth">&lt;</div>\n' +
+            '<div class="arrows prev-mth"></div>\n' +
             '<div class="mth"></div>\n' +
-            '<div class="arrows next-mth">&gt;</div>\n' +
+            '<div class="arrows next-mth"></div>\n' +
             '</div>\n' +
             '<div class="week__days"></div>\n' +
             '<div class="days"></div>\n' +

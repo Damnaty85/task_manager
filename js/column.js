@@ -15,8 +15,8 @@ class Column {
         }
 
         const deleteElement = document.createElement('span');
-        deleteElement.classList.add('column__close');
-        deleteElement.textContent = '+';
+        deleteElement.classList.add('column__delete');
+        deleteElement.innerHTML = '<img src="./image/delete.png" title="Удалить список" alt="Удалить список">';
         element.append(deleteElement);
         const columnHeader = document.createElement('p');
         columnHeader.classList.add('column__header');
@@ -28,7 +28,6 @@ class Column {
         columnFooter.classList.add('column__footer');
         element.append(columnFooter);
         columnFooter.innerHTML = '<span data-action-addNote class="action"> + Создать задачу</span>';
-
 
         element.querySelector('.column__header').textContent = title;
 
@@ -45,7 +44,7 @@ class Column {
 
         });
 
-        const deleteColumn = element.querySelector('.column__close');
+        const deleteColumn = element.querySelector('.column__delete');
 
         deleteColumn.addEventListener('click',() => {
             element.classList.add('delete-column');
@@ -58,7 +57,7 @@ class Column {
         const headerElement = element.querySelector('.column__header');
 
         //валидация заголовка
-        new Validation(headerElement, 26);
+        new Validation(headerElement, 26, 70);
 
         headerElement.addEventListener('dblclick', (evt) => {
             headerElement.setAttribute('contenteditable', 'true');
