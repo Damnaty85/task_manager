@@ -65,6 +65,7 @@ class Calendar {
         prevMonthElement.addEventListener('click', prevMonthHandler);
 
         function toggleDatePicker (evt) {
+            // const path = event.path || (event.composedPath && event.composedPath());
             if (!checkEventPathForClass(evt.path, 'dates')) {
                 datesElement.classList.toggle('active');
             }

@@ -14,21 +14,13 @@ class Column {
             Column.IdCounter++;
         }
 
-        const deleteElement = document.createElement('span');
-        deleteElement.classList.add('column__close');
-        deleteElement.textContent = '+';
-        element.append(deleteElement);
-        const columnHeader = document.createElement('p');
-        columnHeader.classList.add('column__header');
-        element.append(columnHeader);
-        const noteWrap = document.createElement('div');
-        noteWrap.classList.add('column__body');
-        element.append(noteWrap);
-        const columnFooter = document.createElement('p');
-        columnFooter.classList.add('column__footer');
-        element.append(columnFooter);
-        columnFooter.innerHTML = '<span data-action-addNote class="action"> + Создать задачу</span>';
-
+        element.innerHTML =
+            '<span class="column__close" title="Удалить список">+</span>\n' +
+            '<p class="column__header"></p>\n' +
+            '<div class="column__body"></div>\n' +
+            '<p class="column__footer">\n' +
+            '<span data-action-addNote class="action"> + Создать задачу</span>\n' +
+            '</p>';
 
         element.querySelector('.column__header').textContent = title;
 
@@ -56,9 +48,6 @@ class Column {
         });
 
         const headerElement = element.querySelector('.column__header');
-
-        //валидация заголовка
-        new Validation(headerElement, 26);
 
         headerElement.addEventListener('dblclick', (evt) => {
             headerElement.setAttribute('contenteditable', 'true');

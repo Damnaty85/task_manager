@@ -6,27 +6,58 @@ class Note {
         element.classList.add('task-manager__note-wrap');
         element.setAttribute('draggable', 'true');
 
-        //создаем календарь из модуля calendar.js
-        const date = new Calendar;
-        element.append(date.element);
-        //создаем структуру карточки задачи
-        const elementTitle = document.createElement('div');
-        elementTitle.classList.add('note__title');
+        element.innerHTML =
+            '<span contenteditable="false" style="color: #EEEEEE;">Заголовок задачи:</span>\n' +
+            '<div class="note__title"></div>\n' +
+            '<span contenteditable="false">Описание задачи:</span>\n' +
+            '<div class="editable__wrap">\n' +
+            '<div class="text_editor-panel">\n' +
+            '<button class="panel__bold">B</button>\n' +
+            '<button class="panel__italic">I</button>\n' +
+            '<button class="panel__list">Ul</button>\n' +
+            '</div>\n' +
+            '<div class="note__description"></div>\n' +
+            '</div>\n' +
+            '<span class="burger__wrap"></span>';
+
+        const elementTitle = element.querySelector('.note__title');
+        const elementDescription = element.querySelector('.note__description');
+
+        const editableWrap = document.querySelector('.editable__wrap');
+
+        const boldButton = element.querySelector('.panel__bold');
+        const italicButton = element.querySelector('.panel__italic');
+        const listButton = element.querySelector('.panel__list');
+
         elementTitle.textContent = title;
-        element.append(elementTitle);
-        const descriptionSpan = document.createElement('span');
-        descriptionSpan.textContent = 'Описание:';
-        descriptionSpan.setAttribute('contenteditable', 'false');
-        element.append(descriptionSpan);
-        const elementDescription = document.createElement('div');
-        elementDescription.classList.add('note__description');
-        element.append(elementDescription);
-        elementDescription.textContent = content;
-        //создаем таймер из модуля timer.js
+        elementDescription.innerHTML = content;
+
+        const calendar = new Calendar;
+        element.append(calendar.element);
+
         const timer = new Timer;
         element.append(timer.element);
 
+        const menu = new TaskMenu;
 
+        const menuTask = element.querySelector('.burger__wrap');
+
+        menuTask.addEventListener('click', () => {
+            menuTask.append(menu.element);
+            const taskMenu = document.querySelector('.task__menu');
+            menuTask.classList.toggle('_opened');
+
+            setTimeout(() => {
+                taskMenu.classList.toggle('_active');
+
+                setTimeout(() => {
+                    if (!taskMenu.classList.contains('_active')) {
+                        taskMenu.remove();
+                    }
+                }, 200)
+
+                }, 100);
+        });
 
         if (id) {
             element.setAttribute('data-note-id', id);
@@ -35,57 +66,18 @@ class Note {
             Note.IdCounter++;
         }
 
-        //валидация заголовка
-        new Validation(elementTitle,  28);
-
-        element.addEventListener('dblclick', (evt) => {
+        elementTitle.addEventListener('dblclick', (evt) => {
             elementTitle.setAttribute('contenteditable', 'true');
+            element.removeAttribute('draggable');
+            element.closest('.task-manager__column').removeAttribute('draggable');
+            elementTitle.focus();
+        });
+
+        elementDescription.addEventListener('dblclick', (evt) => {
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.task-manager__column').removeAttribute('draggable');
-            element.focus();
-        });
-
-
-        element.addEventListener('contextmenu', (evt) => {
-            evt.preventDefault();
-
-            if (document.querySelector('.right-menu')) {
-                document.querySelector('.right-menu').remove();
-            }
-
-            const rightMenu = document.createElement('div');
-            rightMenu.classList.add('right-menu');
-            element.append(rightMenu);
-            const detailSpanMenu = document.createElement('span');
-            detailSpanMenu.textContent = 'Просмотреть';
-            rightMenu.append(detailSpanMenu);
-            const editSpanMenu = document.createElement('span');
-            editSpanMenu.textContent = 'Редактировать';
-            rightMenu.append(editSpanMenu);
-            const deleteSpanMenu = document.createElement('span');
-            deleteSpanMenu.textContent = 'Удалить';
-            rightMenu.append(deleteSpanMenu);
-            rightMenu.style = 'top:' + evt.pageY + 'px; left:' + evt.pageX + 'px;';
-
-            editSpanMenu.addEventListener('click', () => {
-                elementTitle.setAttribute('contenteditable', 'true');
-                elementDescription.setAttribute('contenteditable', 'true');
-                element.removeAttribute('draggable');
-                element.closest('.task-manager__column').removeAttribute('draggable');
-                elementTitle.focus();
-                rightMenu.remove();
-                App.save()
-            });
-
-            deleteSpanMenu.addEventListener('click', () => {
-                element.remove();
-                App.save()
-            });
-
-            document.addEventListener('click', () => {
-                rightMenu.remove();
-            });
+            elementDescription.focus();
         });
 
         elementTitle.addEventListener('blur', () => {
@@ -95,12 +87,12 @@ class Note {
             this.checkForEmptiness(elementTitle, element);
         });
 
-        elementDescription.addEventListener('blur', () => {
-            elementTitle.removeAttribute('contenteditable');
-            elementDescription.removeAttribute('contenteditable');
-
-            this.checkForEmptiness(elementDescription, element);
-        });
+        // elementDescription.addEventListener('blur', () => {
+        //     elementTitle.removeAttribute('contenteditable');
+        //     elementDescription.removeAttribute('contenteditable');
+        //
+        //     this.checkForEmptiness(elementDescription, element);
+        // });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
         element.addEventListener('dragend', this.dragend.bind(this));
@@ -109,7 +101,22 @@ class Note {
         element.addEventListener('dragleave', this.dragleave.bind(this));
         element.addEventListener('drop', this.drop.bind(this));
 
+        boldButton.addEventListener('click', this.editingBold.bind(this));
+        italicButton.addEventListener('click', this.editingItalic.bind(this));
+        listButton.addEventListener('click', this.editingList.bind(this));
+    }
 
+    editingBold () {
+        document.execCommand('Bold');
+        App.save();
+    }
+    editingItalic () {
+        document.execCommand('Italic');
+        App.save();
+    }
+    editingList () {
+        document.execCommand('insertUnorderedList');
+        App.save();
     }
 
     checkForEmptiness (elementName, element) {

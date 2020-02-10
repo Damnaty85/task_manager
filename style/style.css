@@ -62,7 +62,7 @@ h1 {
     padding: 10px 15px;
     position: relative;
     transition: 0.3s;
-    width: 390px;
+    width: 500px;
     border-right: 1px solid #8080801f;
     border-left: 1px solid #8080801f;
 }
@@ -73,6 +73,7 @@ h1 {
 
 .task-manager__column.dragged {
     opacity: 0.8;
+    cursor: grab;
 }
 
 .task-manager__column._under {
@@ -197,7 +198,7 @@ span.column__close {
     font-weight: 400;
     color: rgb(82, 106, 122);
     /*box-shadow: -1px 3px 10px #8080803b;*/
-    padding: 50px 15px 15px;
+    padding: 15px;
     margin: 15px 0;
     transition: 0.3s linear;
     z-index: 1;
@@ -209,7 +210,6 @@ span.column__close {
 
 .task-manager__note-wrap:hover {
 	background-color: #bfe4ff;
-    cursor: pointer;
 }
 
 .task-manager__note-wrap span {
@@ -236,7 +236,7 @@ span.column__close {
     left: 0;
     background-color: #006978;
     width: 100%;
-    height: 110px;
+    height: 90px;
     z-index: -1;
 }
 
@@ -255,16 +255,54 @@ span.column__close {
     overflow: hidden;
 }
 
+.burger__wrap {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    z-index: 9;
+    cursor: pointer;
+}
+
+.burger__wrap:before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 0;
+    background-color: white;
+    width: 25px;
+    height: 3px;
+    transition: 0.2s;
+}
+
+.burger__wrap:after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: 0;
+    background-color: white;
+    width: 20px;
+    height: 3px;
+    transition: 0.2s;
+}
+
+.burger__wrap._opened:before {
+    transform: rotate(45deg) translate(-1px, 5px);
+}
+
+.burger__wrap._opened:after {
+    transform: rotate(-45deg) translate(0px, -5px);
+    width: 25px;
+}
+
 .note:focus {
 	cursor: auto;
 }
 
-.note textarea {
-	margin: 0;
-}
-
 .note.dragged {
 	opacity: 0.01;
+    cursor: grab;
 }
 
 .action {
@@ -281,39 +319,50 @@ span.column__close {
     pointer-events: none;
 }
 
-.right-menu {
+.task__menu {
+    width: 170px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     align-items: flex-start;
-    position: fixed;
-    width: 200px;
-    background-color: #f1f1f1;
-    border-radius: 6px;
-    box-shadow: 1px 1px 5px grey;
-    z-index: 9;
+    background-color: #fbfbfb;
+    box-shadow: -2px 18px 18px #0000009c;
+    position: absolute;
+    top: 25px;
+    right: -230px;
+    transition: 0.2s;
+    opacity: 0;
 }
 
-.right-menu span {
+.task__menu._active {
+    right: -20px;
+    opacity: 1;
+}
+
+.task__menu span {
+    margin-bottom: 5px;
     padding: 10px;
     width: 100%;
-    height: 100%;
 }
 
-.right-menu span:hover {
-    background-color: #e3f2fd;
-    border-radius: 6px;
-    cursor: pointer;
+.task__menu span:hover{
+    background-color: #e2e2e2;
+}
+
+.text_editor-panel button {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border: none;
+    box-shadow: 2px 4px 7px #00000029;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .date__wrap {
-    position: absolute;
-    top: 0;
-    right: 0;
     display: flex;
-    padding: 2px;
     font-size: 14px;
     color: white;
-    width: 264px;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
@@ -324,7 +373,6 @@ span.column__close {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0 20px;
     font-size: 12px;
     background-color: white;
     color: black;
@@ -404,7 +452,6 @@ span.column__close {
     background-color: #ffffff;
     cursor: pointer;
     user-select: none;
-    padding: 2px;
 }
 
 .date-picker:hover{
@@ -419,7 +466,6 @@ span.column__close {
     font-size: 12px;
     align-items: center;
     justify-content: space-between;
-    padding: 0 18px;
 }
 
 .date-picker .dates{

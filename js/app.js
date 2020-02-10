@@ -31,7 +31,7 @@ const App = {
                const note = {
                    id: parseInt(noteElement.getAttribute('data-note-id')),
                    title: noteElement.querySelector('.note__title').textContent,
-                   content: noteElement.querySelector('.note__description').textContent
+                   content: noteElement.querySelector('.note__description').innerHTML
                };
 
                 object.notes.items.push(note)
