@@ -7,14 +7,22 @@ class Note {
         element.setAttribute('draggable', 'true');
 
         element.innerHTML =
-            '<span contenteditable="false" style="color: #EEEEEE;">Заголовок задачи:</span>\n' +
+            '<span class="note__background" contenteditable="false"><img src="image/background_03.png" alt=""></span>\n' +
+            '<div class="note-title__wrap">\n' +
             '<div class="note__title"></div>\n' +
+            '<span class="far fa-edit _note-title"></span>\n' +
+            '</div>\n' +
             '<span contenteditable="false">Описание задачи:</span>\n' +
             '<div class="editable__wrap">\n' +
             '<div class="text_editor-panel">\n' +
-            '<button class="panel__bold">B</button>\n' +
-            '<button class="panel__italic">I</button>\n' +
-            '<button class="panel__list">Ul</button>\n' +
+            '<button class="bold"><i class="fas fa-bold"></i></button>\n' +
+            '<button class="italic"><i class="fas fa-italic"></i></button>\n' +
+            '<button class="list"><i class="fas fa-list-ul"></i></button>\n' +
+            '<button class="justifyCenter"><i class="fas fa-align-center"></i></button>\n' +
+            '<button class="justifyFull"><i class="fas fa-align-justify"></i></button>\n' +
+            '<button class="justifyLeft"><i class="fas fa-align-left"></i></button>\n' +
+            '<button class="justifyRight"><i class="fas fa-align-right"></i></button>\n' +
+            '<span class="far fa-edit _note-description"></span>\n' +
             '</div>\n' +
             '<div class="note__description"></div>\n' +
             '</div>\n' +
@@ -23,11 +31,18 @@ class Note {
         const elementTitle = element.querySelector('.note__title');
         const elementDescription = element.querySelector('.note__description');
 
-        const editableWrap = document.querySelector('.editable__wrap');
+        const enableEditTitleButton = element.querySelector('.fa-edit._note-title');
+        const enableEditDescriptionButton = element.querySelector('.fa-edit._note-description');
+        const editContentTitle = element.querySelector('.note-title__wrap');
+        const editContentDescription = element.querySelector('.editable__wrap');
 
-        const boldButton = element.querySelector('.panel__bold');
-        const italicButton = element.querySelector('.panel__italic');
-        const listButton = element.querySelector('.panel__list');
+        const boldButton = element.querySelector('.bold');
+        const italicButton = element.querySelector('.italic');
+        const listButton = element.querySelector('.list');
+        const justifyCenter = element.querySelector('.justifyCenter');
+        const justifyFull = element.querySelector('.justifyFull');
+        const justifyLeft = element.querySelector('.justifyLeft');
+        const justifyRight = element.querySelector('.justifyRight');
 
         elementTitle.textContent = title;
         elementDescription.innerHTML = content;
@@ -56,43 +71,83 @@ class Note {
                     }
                 }, 200)
 
-                }, 100);
+            }, 100);
         });
 
         if (id) {
             element.setAttribute('data-note-id', id);
+            Note.IdCounter++;
         } else {
             element.setAttribute('data-note-id', Note.IdCounter);
             Note.IdCounter++;
         }
 
-        elementTitle.addEventListener('dblclick', (evt) => {
-            elementTitle.setAttribute('contenteditable', 'true');
-            element.removeAttribute('draggable');
-            element.closest('.task-manager__column').removeAttribute('draggable');
-            elementTitle.focus();
+        //редактирование заголовка карточки
+        editContentTitle.addEventListener('mouseenter', () => {
+            enableEditTitleButton.style.opacity = '1';
         });
 
-        elementDescription.addEventListener('dblclick', (evt) => {
+        enableEditTitleButton.addEventListener('click', () => {
+            enableEditTitleButton.style.opacity = '0';
+            elementTitle.setAttribute('contenteditable', 'true');
+            element.closest('.task-manager__column').removeAttribute('draggable');
+            elementTitle.focus();
+            element.removeAttribute('draggable');
+            const editTitleSucces = document.createElement('div');
+            editTitleSucces.classList.add('button-edit__title');
+            editTitleSucces.textContent = 'Сохранить изминения';
+            editContentTitle.append(editTitleSucces);
+
+            if (elementTitle.hasAttribute('contenteditable')) {
+                enableEditTitleButton.style.display = 'none';
+            }
+
+            editTitleSucces.addEventListener('click', () => {
+                elementTitle.removeAttribute('contenteditable');
+                elementTitle.blur();
+                this.checkForEmptiness(elementTitle, element);
+                editTitleSucces.remove();
+                enableEditTitleButton.style.display = 'block';
+            });
+        });
+
+        editContentTitle.addEventListener('mouseleave', () => {
+            enableEditTitleButton.style.opacity = '0';
+        });
+
+        //редактирование описания карточки
+        editContentDescription.addEventListener('mouseenter', () => {
+            enableEditDescriptionButton.style.opacity = '1';
+        });
+
+        enableEditDescriptionButton.addEventListener('click', () => {
+            enableEditDescriptionButton.style.opacity = '0';
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.task-manager__column').removeAttribute('draggable');
             elementDescription.focus();
+
+            const editDescriptionSucces = document.createElement('div');
+            editDescriptionSucces.classList.add('button-edit__description');
+            editDescriptionSucces.textContent = 'Сохранить изминения';
+            editContentDescription.append(editDescriptionSucces);
+
+            if (elementDescription.hasAttribute('contenteditable')) {
+                enableEditDescriptionButton.style.display = 'none';
+            }
+
+            editDescriptionSucces.addEventListener('click', () => {
+                elementDescription.removeAttribute('contenteditable');
+                elementDescription.blur();
+                this.checkForEmptiness(elementDescription, element);
+                editDescriptionSucces.remove();
+                enableEditDescriptionButton.style.display = 'block';
+            });
         });
 
-        elementTitle.addEventListener('blur', () => {
-            elementTitle.removeAttribute('contenteditable');
-            elementDescription.removeAttribute('contenteditable');
-
-            this.checkForEmptiness(elementTitle, element);
+        editContentDescription.addEventListener('mouseleave', () => {
+            enableEditDescriptionButton.style.opacity = '0';
         });
-
-        // elementDescription.addEventListener('blur', () => {
-        //     elementTitle.removeAttribute('contenteditable');
-        //     elementDescription.removeAttribute('contenteditable');
-        //
-        //     this.checkForEmptiness(elementDescription, element);
-        // });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
         element.addEventListener('dragend', this.dragend.bind(this));
@@ -104,18 +159,51 @@ class Note {
         boldButton.addEventListener('click', this.editingBold.bind(this));
         italicButton.addEventListener('click', this.editingItalic.bind(this));
         listButton.addEventListener('click', this.editingList.bind(this));
+        justifyCenter.addEventListener('click', this.editingjustifyCenter.bind(this));
+        justifyFull.addEventListener('click', this.editingjustifyFull.bind(this));
+        justifyLeft.addEventListener('click', this.editingjustifyLeft.bind(this));
+        justifyRight.addEventListener('click', this.editingjustifyRight.bind(this));
     }
 
-    editingBold () {
+    editingBold (evt) {
+        evt.preventDefault();
         document.execCommand('Bold');
         App.save();
     }
-    editingItalic () {
+
+    editingItalic (evt) {
+        evt.preventDefault();
         document.execCommand('Italic');
         App.save();
     }
-    editingList () {
+
+    editingList (evt) {
+        evt.preventDefault();
         document.execCommand('insertUnorderedList');
+        App.save();
+    }
+
+    editingjustifyCenter (evt) {
+        evt.preventDefault();
+        document.execCommand('justifyCenter');
+        App.save();
+    }
+
+    editingjustifyFull (evt) {
+        evt.preventDefault();
+        document.execCommand('justifyFull');
+        App.save();
+    }
+
+    editingjustifyLeft (evt) {
+        evt.preventDefault();
+        document.execCommand('justifyLeft');
+        App.save();
+    }
+
+    editingjustifyRight (evt) {
+        evt.preventDefault();
+        document.execCommand('justifyRight');
         App.save();
     }
 
@@ -150,6 +238,7 @@ class Note {
             return
         }
         this.element.classList.add('under');
+        console.log('add class')
     }
 
     dragover(evt) {
@@ -164,6 +253,7 @@ class Note {
             return;
         }
         this.element.classList.remove('under');
+        console.log('remove class');
     }
 
     drop(evt) {

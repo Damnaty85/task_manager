@@ -8,21 +8,6 @@ body {
     font-family: 'Roboto Mono', monospace;
 }
 
-h1 {
-    color: #131313;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 38px;
-    margin-top: -15px;
-}
-
-.task-manager {
-	height: 100vh;
-	padding: 10px;
-	margin: 10px;
-}
-
 .task-manager__wrap {
 	display: flex;
     align-items: flex-start;
@@ -197,53 +182,113 @@ span.column__close {
     line-height: 1.3;
     font-weight: 400;
     color: rgb(82, 106, 122);
-    /*box-shadow: -1px 3px 10px #8080803b;*/
     padding: 15px;
     margin: 15px 0;
     transition: 0.3s linear;
     z-index: 1;
     position: relative;
-    border-right: 1px solid #006978;
-    border-left: 1px solid #006978;
-    border-bottom: 1px solid #006978;
+    box-shadow: 0px 2px 10px rgba(128, 128, 128, 0.82);
 }
 
 .task-manager__note-wrap:hover {
-	background-color: #bfe4ff;
+    box-shadow: 8px 12px 25px rgba(128, 128, 128, 0.47);
 }
 
 .task-manager__note-wrap span {
     padding-bottom: 3px;
 }
 
+.note-title__wrap {
+    margin-top: 80px;
+    margin-bottom: 40px;
+    position: relative;
+}
+
 .note__title {
     padding: 0 10px 5px;
-    min-height: 40px;
-    margin-top: 5px;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
     outline: none;
-    background-color: #006978;
     font-size: 18px;
     display: flex;
     align-items: center;
     color: white;
 }
 
-.note__title:before {
-    content: '';
+span.far.fa-edit._note-title {
+    position: absolute;
+    top: 0;
+    transform: translateY(0%);
+    right: -10px;
+    color: #e1e1e1;
+    opacity: 0;
+    transition: 0.4s;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+span.far.fa-edit._note-description {
+    position: absolute;
+    top: 0;
+    transform: translateY(0%);
+    right: 0;
+    color: #636262;
+    opacity: 0;
+    transition: 0.4s;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.button-edit__title {
+    position: absolute;
+    top: 50px;
+    right: 0px;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #0c7e83;
+    border: 1px solid #186370;
+}
+
+.button-edit__description {
+    position: absolute;
+    bottom: -30px;
+    right: 0;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #0c7e83;
+    border: 1px solid #186370;
+}
+
+span.note__background {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #006978;
     width: 100%;
-    height: 90px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: -1;
 }
 
+span.note__background:before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #006978a6;
+}
+
+span.note__background img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .note__description {
-    padding: 10px 5px;
-    min-height: 70px;
-    background-color: white;
+    padding: 45px 5px 5px;
+    min-height: 110px;
     margin-top: 5px;
     color: black;
     margin-bottom: 5px;
@@ -251,8 +296,6 @@ span.column__close {
     line-height: 24px;
     word-spacing: 3px;
     width: 100%;
-    resize: none;
-    overflow: hidden;
 }
 
 .burger__wrap {
@@ -309,15 +352,19 @@ span.column__close {
 	cursor: pointer;
 }
 
-.note.under {
+.task-manager__note-wrap.under {
 	opacity: 0.5;
     margin-top: 30px;
 }
 
-.note.under > .note__title,
-.note.under > .note__description{
-    pointer-events: none;
-}
+/*.task-manager__note-wrap.under > .burger__wrap,*/
+/*.task-manager__note-wrap.under > .date__wrap,*/
+/*.task-manager__note-wrap.under > .text_editor-panel,*/
+/*.task-manager__note-wrap.under > .task-manager__note-wrap span,*/
+/*.task-manager__note-wrap.under > .editable__wrap,*/
+/*.task-manager__note-wrap.under > .timer__wrap{*/
+/*    pointer-events: none;*/
+/*}*/
 
 .task__menu {
     width: 170px;
@@ -349,38 +396,33 @@ span.column__close {
     background-color: #e2e2e2;
 }
 
-.text_editor-panel button {
-    width: 30px;
-    height: 30px;
-    background-color: white;
-    border: none;
-    box-shadow: 2px 4px 7px #00000029;
-    margin-top: 10px;
-    margin-bottom: 10px;
+.editable__wrap{
+    position: relative;
 }
 
-.date__wrap {
-    display: flex;
-    font-size: 14px;
-    color: white;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.date-create {
+.text_editor-panel{
+    position: absolute;
+    top: 0;
+    left: 5px;
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    font-size: 12px;
-    background-color: white;
-    color: black;
-    cursor: default;
+    justify-content: flex-start;
 }
 
-.date__wrap span {
-    margin-right: 5px;
+.text_editor-panel button {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border: none;
+    box-shadow: 1px 1px 1px #00000029;
+    transition: 0.2s;
+    outline: none;
+}
+
+.text_editor-panel button:hover {
+    background-color: #006978;
+    color: white;
 }
 
 .timer__wrap {
@@ -395,6 +437,7 @@ span.column__close {
 #stopwatch {
     width: 100%;
     padding-top: 15px;
+    margin-top: 20px;
 }
 
 #stopwatch span {
@@ -446,92 +489,100 @@ span.column__close {
     background-color: #e53935;
 }
 
-.date-picker{
-    position: relative;
-    width: 100%;
-    background-color: #ffffff;
-    cursor: pointer;
-    user-select: none;
-}
-
-.date-picker:hover{
-    background-color: #F3F3F3;
-}
-
-.date-picker .selected-date {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    color: #131313;
-    font-size: 12px;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.date-picker .dates{
+div#calendar {
+    color: black;
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: #ffffff;
-    width: 260px;
-    box-shadow: -2px 18px 18px #0000009c;
 }
 
-.dates.active{
-    display: block;
-}
-
-.dates .month{
+.right-side {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.calendar-month-list {width: 100%;}
+
+ul.calendar-month {
+    display: flex;
+    width: 100%;
+    list-style: none;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #EEEEEE;
-    color: black;
+    padding: 0;
+    margin: 0;
 }
 
-.dates .month .arrows {
-    width: 35px;
-    height: 35px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #313131;
-    font-size: 20px;
+ul.calendar-month li {
+    font-size: 10px;
+    text-transform: uppercase;
 }
 
-.dates .month .arrows:hover{
-    background-color: #F3F3F3;
+ul.calendar-month li.active {
+    /*background-color: #006978;*/
+    /*color: white;*/
+    font-weight: 600;
 }
 
-.dates .month .arrows:active{
-    background-color: #00838f;
+.calendar-week-list {
+    width: 100%;
 }
 
-.date-picker .days{
+ul.calendar-week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    height: 200px;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 }
 
-.date-picker .days .day{
+ul.calendar-week li {
+    height: 50px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    color: #313131;
+    justify-content: center;
 }
 
-.week__days {
+.calendar-day-list {
+    width: 100%;
+}
+
+ul.calendar-days {
+    width: 100%;
+    list-style: none;
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    color: black;
-    align-items: center;
-    justify-items: center;
-    margin: 5px 0;
+    align-self: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 }
 
-.date-picker .days .day.selected{
-    background-color: #00838f;
-    color: #F3F3F3;
+ul.calendar-days li {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+ul.calendar-days li.selected-day {
+    background-color: #cfcfcf;
+    border-radius: 100%;
+    margin: 0 auto;
+    width: 50px;
+}
+
+ul.calendar-days li.active-day {
+    background-color: #006978;
+    border-radius: 100%;
+    width: 50px;
+    margin: 0 auto;
+    color: white;
+}
+
+ul.calendar-days li.another-month{
+    color: #939393;
 }
