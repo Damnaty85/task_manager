@@ -45,6 +45,9 @@ class Column {
                 element.remove();
                 App.save();
             }, 500);
+            if () {
+
+            }
         });
 
         const headerElement = element.querySelector('.column__header');

@@ -46,7 +46,8 @@ body {
 .task-manager__column {
     padding: 10px 15px;
     position: relative;
-    transition: 0.3s;
+    transition: 0.6s;
+    transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
     width: 500px;
     border-right: 1px solid #8080801f;
     border-left: 1px solid #8080801f;
@@ -109,7 +110,7 @@ span.column__close {
 
 .error__message {
     position: absolute;
-    top: 80px;
+    top: 110%;
     background-color: #fdfdfd;
     font-size: 16px;
     padding: 5px;
@@ -121,11 +122,7 @@ span.column__close {
     z-index: 13;
     opacity: 0;
     transition: 0.8s;
-    width: 100%;
-}
-
-.error__message._show--message{
-    opacity: 1;
+    width: max-content;
 }
 
 .error__message:before {
@@ -204,21 +201,31 @@ span.column__close {
     position: relative;
 }
 
-.note__title {
-    padding: 0 10px 5px;
-    margin-bottom: 15px;
+.note__title,
+.title__width-calculate{
+    padding: 10px;
     outline: none;
     font-size: 18px;
     display: flex;
     align-items: center;
     color: white;
+    border-radius: 9px;
+    background-color: #00000014;
+}
+
+.title__width-calculate{
+    opacity: 0;
+    top: 0;
+    position: absolute;
+    width: max-content;
+    z-index: -99;
 }
 
 span.far.fa-edit._note-title {
     position: absolute;
-    top: 0;
-    transform: translateY(0%);
-    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
     color: #e1e1e1;
     opacity: 0;
     transition: 0.4s;
@@ -228,9 +235,9 @@ span.far.fa-edit._note-title {
 
 span.far.fa-edit._note-description {
     position: absolute;
-    top: 0;
+    top: 5px;
     transform: translateY(0%);
-    right: 0;
+    right: 5px;
     color: #636262;
     opacity: 0;
     transition: 0.4s;
@@ -241,23 +248,30 @@ span.far.fa-edit._note-description {
 .button-edit__title {
     position: absolute;
     top: 50px;
-    right: 0px;
-    color: white;
-    padding: 5px;
-    cursor: pointer;
-    background-color: #0c7e83;
-    border: 1px solid #186370;
-}
-
-.button-edit__description {
-    position: absolute;
-    bottom: -30px;
     right: 0;
     color: white;
     padding: 5px;
     cursor: pointer;
     background-color: #0c7e83;
-    border: 1px solid #186370;
+    opacity: 0;
+    transition: 0.3s;
+    /*border: 1px solid #186370;*/
+    /*box-shadow: 2px 5px 8px #08080880;*/
+    /*transition: 0.3s;*/
+}
+
+.button-edit__description {
+    position: absolute;
+    bottom: -15px;
+    right: 10px;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #0c7e83;
+    opacity: 0;
+    transition: 0.3s;
+    /*border: 1px solid #186370;*/
+    /*box-shadow: 2px 5px 8px #08080880;*/
 }
 
 span.note__background {
@@ -287,15 +301,16 @@ span.note__background img {
 }
 
 .note__description {
-    padding: 45px 5px 5px;
+    padding: 10px 5px;
     min-height: 110px;
     margin-top: 5px;
     color: black;
     margin-bottom: 5px;
-    outline: none;
     line-height: 24px;
-    word-spacing: 3px;
     width: 100%;
+    outline: 1px solid #8080801f;
+    transition: 0.5s;
+    transition-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
 .burger__wrap {
@@ -387,7 +402,6 @@ span.note__background img {
 }
 
 .task__menu span {
-    margin-bottom: 5px;
     padding: 10px;
     width: 100%;
 }
@@ -408,6 +422,9 @@ span.note__background img {
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    transition: 0.1s;
+    transition-timing-function: ease-in-out;
+    opacity: 0;
 }
 
 .text_editor-panel button {
@@ -418,6 +435,9 @@ span.note__background img {
     box-shadow: 1px 1px 1px #00000029;
     transition: 0.2s;
     outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .text_editor-panel button:hover {

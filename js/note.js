@@ -10,6 +10,7 @@ class Note {
             '<span class="note__background" contenteditable="false"><img src="image/background_03.png" alt=""></span>\n' +
             '<div class="note-title__wrap">\n' +
             '<div class="note__title"></div>\n' +
+            '<div class="title__width-calculate"></div>\n' +
             '<span class="far fa-edit _note-title"></span>\n' +
             '</div>\n' +
             '<span contenteditable="false">Описание задачи:</span>\n' +
@@ -18,27 +19,31 @@ class Note {
             '<button class="bold"><i class="fas fa-bold"></i></button>\n' +
             '<button class="italic"><i class="fas fa-italic"></i></button>\n' +
             '<button class="list"><i class="fas fa-list-ul"></i></button>\n' +
+            '<button class="number_list"><i class="fas fa-list-ol"></i></button>\n' +
             '<button class="justifyCenter"><i class="fas fa-align-center"></i></button>\n' +
             '<button class="justifyFull"><i class="fas fa-align-justify"></i></button>\n' +
             '<button class="justifyLeft"><i class="fas fa-align-left"></i></button>\n' +
             '<button class="justifyRight"><i class="fas fa-align-right"></i></button>\n' +
-            '<span class="far fa-edit _note-description"></span>\n' +
             '</div>\n' +
+            '<span class="far fa-edit _note-description"></span>\n' +
             '<div class="note__description"></div>\n' +
             '</div>\n' +
             '<span class="burger__wrap"></span>';
 
         const elementTitle = element.querySelector('.note__title');
+        const elementTitleHidden = element.querySelector('.title__width-calculate');
         const elementDescription = element.querySelector('.note__description');
 
         const enableEditTitleButton = element.querySelector('.fa-edit._note-title');
         const enableEditDescriptionButton = element.querySelector('.fa-edit._note-description');
         const editContentTitle = element.querySelector('.note-title__wrap');
         const editContentDescription = element.querySelector('.editable__wrap');
+        const editPanel = element.querySelector('.text_editor-panel');
 
         const boldButton = element.querySelector('.bold');
         const italicButton = element.querySelector('.italic');
         const listButton = element.querySelector('.list');
+        const listNumberButton = element.querySelector('.number_list');
         const justifyCenter = element.querySelector('.justifyCenter');
         const justifyFull = element.querySelector('.justifyFull');
         const justifyLeft = element.querySelector('.justifyLeft');
@@ -88,25 +93,85 @@ class Note {
         });
 
         enableEditTitleButton.addEventListener('click', () => {
-            enableEditTitleButton.style.opacity = '0';
             elementTitle.setAttribute('contenteditable', 'true');
             element.closest('.task-manager__column').removeAttribute('draggable');
             elementTitle.focus();
             element.removeAttribute('draggable');
+
+            //создаем кнопку сохранить изминения в заголвоке
             const editTitleSucces = document.createElement('div');
             editTitleSucces.classList.add('button-edit__title');
-            editTitleSucces.textContent = 'Сохранить изминения';
+            editTitleSucces.textContent = 'Сохранить изменения';
             editContentTitle.append(editTitleSucces);
+            setTimeout(() => {
+                editTitleSucces.style.opacity = '1';
+            }, 200);
 
+            //прячем карандашик, если поле редактируется
             if (elementTitle.hasAttribute('contenteditable')) {
                 enableEditTitleButton.style.display = 'none';
             }
 
+            //странная валидация, но я так хочу
+            elementTitle.addEventListener('input', () => {
+
+                let elementTitleContent = elementTitle.textContent;
+
+                elementTitleHidden.textContent = elementTitleContent;
+
+                //50 корректирующее значение
+                let elementTitleHiddenWidthSize = elementTitleHidden.getBoundingClientRect().width + 50;
+                let elementTitleWidthSize = elementTitle.getBoundingClientRect().width;
+
+                //Условие проверяет длинну скрытого поля и сравниет с полем заголовка и запрещает ввод
+                if (elementTitleHiddenWidthSize > elementTitleWidthSize) {
+                    editTitleSucces.style.pointerEvents = 'none';
+                    elementTitle.addEventListener('keydown', this.removingPreventKeyBoard);
+                    //надо придумать другой способ запрета и разрешения ввода
+                    elementTitle.addEventListener('keydown', (evt) => {
+                        if (evt.keyCode == 8 || evt.keyCode == 37){
+                            elementTitle.removeEventListener('keydown', this.removingPreventKeyBoard);
+                        }
+                    });
+
+                    let charsCount = elementTitle.textContent.length;
+
+                    //создаем сообщение об ошибке
+                    const errorMessage = document.createElement('span');
+                    errorMessage.classList.add('error__message');
+                    errorMessage.textContent = 'Достигнута максимальная длинна зоголовка.Максимум ' + charsCount + ' символов';
+                    elementTitle.insertAdjacentElement('afterend', errorMessage);
+
+                    //отрисовыеем сообщение об ошибке
+                    setTimeout(() => {
+                        errorMessage.style.opacity = '1';
+                        //задержка показа сообщения об ошибке
+                        setTimeout(() => {
+                            errorMessage.style.opacity = null;
+                            //задержка перед удалением ссобщения из DOM чтобы все плавненько
+                            setTimeout(() => {
+                                errorMessage.remove();
+                            },3200);
+                        }, 3000);
+                    }, 200)
+
+                } else {
+                    //если заголовок удовлетворяет условиям разрешаем сохранить изменения
+                    editTitleSucces.style.pointerEvents = null;
+                    elementTitle.removeEventListener('keydown', this.removingPreventKeyBoard);
+                }
+            });
+
+            //событие приминения изминений и сохранение в local Storage
             editTitleSucces.addEventListener('click', () => {
                 elementTitle.removeAttribute('contenteditable');
                 elementTitle.blur();
                 this.checkForEmptiness(elementTitle, element);
-                editTitleSucces.remove();
+                editTitleSucces.style.opacity = '0';
+                setTimeout(() => {
+                    editTitleSucces.remove();
+                }, 200);
+                enableEditTitleButton.style.opacity = '0';
                 enableEditTitleButton.style.display = 'block';
             });
         });
@@ -121,7 +186,8 @@ class Note {
         });
 
         enableEditDescriptionButton.addEventListener('click', () => {
-            enableEditDescriptionButton.style.opacity = '0';
+            elementDescription.style.paddingTop = '50px';
+            setTimeout(() => {editPanel.style.opacity = '1';}, 200);
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.task-manager__column').removeAttribute('draggable');
@@ -129,18 +195,27 @@ class Note {
 
             const editDescriptionSucces = document.createElement('div');
             editDescriptionSucces.classList.add('button-edit__description');
-            editDescriptionSucces.textContent = 'Сохранить изминения';
+            editDescriptionSucces.textContent = 'Сохранить изменения';
             editContentDescription.append(editDescriptionSucces);
+            setTimeout(() => {
+                editDescriptionSucces.style.opacity = '1';
+            }, 200);
 
             if (elementDescription.hasAttribute('contenteditable')) {
                 enableEditDescriptionButton.style.display = 'none';
             }
 
             editDescriptionSucces.addEventListener('click', () => {
+                setTimeout(() => {elementDescription.style.paddingTop = null;}, 200);
+                editPanel.style.opacity = '0';
                 elementDescription.removeAttribute('contenteditable');
                 elementDescription.blur();
                 this.checkForEmptiness(elementDescription, element);
-                editDescriptionSucces.remove();
+                editDescriptionSucces.style.opacity = '0';
+                setTimeout(() => {
+                    editDescriptionSucces.remove();
+                }, 200);
+                enableEditDescriptionButton.style.opacity = '0';
                 enableEditDescriptionButton.style.display = 'block';
             });
         });
@@ -159,52 +234,55 @@ class Note {
         boldButton.addEventListener('click', this.editingBold.bind(this));
         italicButton.addEventListener('click', this.editingItalic.bind(this));
         listButton.addEventListener('click', this.editingList.bind(this));
+        listNumberButton.addEventListener('click', this.editingNumericList.bind(this));
         justifyCenter.addEventListener('click', this.editingjustifyCenter.bind(this));
         justifyFull.addEventListener('click', this.editingjustifyFull.bind(this));
         justifyLeft.addEventListener('click', this.editingjustifyLeft.bind(this));
         justifyRight.addEventListener('click', this.editingjustifyRight.bind(this));
     }
 
+    removingPreventKeyBoard (evt) {
+        evt.preventDefault();
+    }
+
     editingBold (evt) {
         evt.preventDefault();
         document.execCommand('Bold');
-        App.save();
     }
 
     editingItalic (evt) {
         evt.preventDefault();
         document.execCommand('Italic');
-        App.save();
     }
 
     editingList (evt) {
         evt.preventDefault();
         document.execCommand('insertUnorderedList');
-        App.save();
+    }
+
+    editingNumericList (evt) {
+        evt.preventDefault();
+        document.execCommand('insertOrderedList');
     }
 
     editingjustifyCenter (evt) {
         evt.preventDefault();
         document.execCommand('justifyCenter');
-        App.save();
     }
 
     editingjustifyFull (evt) {
         evt.preventDefault();
         document.execCommand('justifyFull');
-        App.save();
     }
 
     editingjustifyLeft (evt) {
         evt.preventDefault();
         document.execCommand('justifyLeft');
-        App.save();
     }
 
     editingjustifyRight (evt) {
         evt.preventDefault();
         document.execCommand('justifyRight');
-        App.save();
     }
 
     checkForEmptiness (elementName, element) {
