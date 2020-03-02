@@ -11,21 +11,11 @@ class Note {
             '<div class="note-title__wrap">\n' +
             '<div class="note__title"></div>\n' +
             '<div class="title__width-calculate"></div>\n' +
-            '<span class="far fa-edit _note-title"></span>\n' +
+            '<span class="material-icons _edit--note-title">create</span>\n' +
             '</div>\n' +
             '<span contenteditable="false">Описание задачи:</span>\n' +
             '<div class="editable__wrap">\n' +
-            '<div class="text_editor-panel">\n' +
-            '<button class="bold"><i class="fas fa-bold"></i></button>\n' +
-            '<button class="italic"><i class="fas fa-italic"></i></button>\n' +
-            '<button class="list"><i class="fas fa-list-ul"></i></button>\n' +
-            '<button class="number_list"><i class="fas fa-list-ol"></i></button>\n' +
-            '<button class="justifyCenter"><i class="fas fa-align-center"></i></button>\n' +
-            '<button class="justifyFull"><i class="fas fa-align-justify"></i></button>\n' +
-            '<button class="justifyLeft"><i class="fas fa-align-left"></i></button>\n' +
-            '<button class="justifyRight"><i class="fas fa-align-right"></i></button>\n' +
-            '</div>\n' +
-            '<span class="far fa-edit _note-description"></span>\n' +
+            '<span class="material-icons _edit--note-description">create</span>\n' +
             '<div class="note__description"></div>\n' +
             '</div>\n' +
             '<span class="burger__wrap"></span>';
@@ -34,26 +24,18 @@ class Note {
         const elementTitleHidden = element.querySelector('.title__width-calculate');
         const elementDescription = element.querySelector('.note__description');
 
-        const enableEditTitleButton = element.querySelector('.fa-edit._note-title');
-        const enableEditDescriptionButton = element.querySelector('.fa-edit._note-description');
+        const enableEditTitleButton = element.querySelector('._edit--note-title');
+        const enableEditDescriptionButton = element.querySelector('._edit--note-description');
         const editContentTitle = element.querySelector('.note-title__wrap');
         const editContentDescription = element.querySelector('.editable__wrap');
-        const editPanel = element.querySelector('.text_editor-panel');
-
-        const boldButton = element.querySelector('.bold');
-        const italicButton = element.querySelector('.italic');
-        const listButton = element.querySelector('.list');
-        const listNumberButton = element.querySelector('.number_list');
-        const justifyCenter = element.querySelector('.justifyCenter');
-        const justifyFull = element.querySelector('.justifyFull');
-        const justifyLeft = element.querySelector('.justifyLeft');
-        const justifyRight = element.querySelector('.justifyRight');
 
         elementTitle.textContent = title;
         elementDescription.innerHTML = content;
 
-        const calendar = new Calendar;
-        element.append(calendar.element);
+        const editPanel = new EditPanel;
+
+        // const calendar = new Calendar;
+        // element.append(calendar.element);
 
         const timer = new Timer;
         element.append(timer.element);
@@ -99,12 +81,13 @@ class Note {
             element.removeAttribute('draggable');
 
             //создаем кнопку сохранить изминения в заголвоке
-            const editTitleSucces = document.createElement('div');
-            editTitleSucces.classList.add('button-edit__title');
-            editTitleSucces.textContent = 'Сохранить изменения';
-            editContentTitle.append(editTitleSucces);
+            const buttonSaveEditTitle = document.createElement('div');
+            buttonSaveEditTitle.classList.add('button-edit__title');
+            buttonSaveEditTitle.innerHTML = '<i class="material-icons">save</i><span>Сохранить изменения</span>';
+            editContentTitle.append(buttonSaveEditTitle);
+
             setTimeout(() => {
-                editTitleSucces.style.opacity = '1';
+                buttonSaveEditTitle.style.opacity = '1';
             }, 200);
 
             //прячем карандашик, если поле редактируется
@@ -125,9 +108,9 @@ class Note {
 
                 //Условие проверяет длинну скрытого поля и сравниет с полем заголовка и запрещает ввод
                 if (elementTitleHiddenWidthSize > elementTitleWidthSize) {
-                    editTitleSucces.style.pointerEvents = 'none';
+                    buttonSaveEditTitle.style.pointerEvents = 'none';
                     elementTitle.addEventListener('keydown', this.removingPreventKeyBoard);
-                    //надо придумать другой способ запрета и разрешения ввода
+
                     elementTitle.addEventListener('keydown', (evt) => {
                         if (evt.keyCode == 8 || evt.keyCode == 37){
                             elementTitle.removeEventListener('keydown', this.removingPreventKeyBoard);
@@ -157,19 +140,19 @@ class Note {
 
                 } else {
                     //если заголовок удовлетворяет условиям разрешаем сохранить изменения
-                    editTitleSucces.style.pointerEvents = null;
+                    buttonSaveEditTitle.style.pointerEvents = null;
                     elementTitle.removeEventListener('keydown', this.removingPreventKeyBoard);
                 }
             });
 
             //событие приминения изминений и сохранение в local Storage
-            editTitleSucces.addEventListener('click', () => {
+            buttonSaveEditTitle.addEventListener('click', () => {
                 elementTitle.removeAttribute('contenteditable');
                 elementTitle.blur();
                 this.checkForEmptiness(elementTitle, element);
-                editTitleSucces.style.opacity = '0';
+                buttonSaveEditTitle.style.opacity = '0';
                 setTimeout(() => {
-                    editTitleSucces.remove();
+                    buttonSaveEditTitle.remove();
                 }, 200);
                 enableEditTitleButton.style.opacity = '0';
                 enableEditTitleButton.style.display = 'block';
@@ -186,34 +169,43 @@ class Note {
         });
 
         enableEditDescriptionButton.addEventListener('click', () => {
-            elementDescription.style.paddingTop = '50px';
-            setTimeout(() => {editPanel.style.opacity = '1';}, 200);
+            elementDescription.style.paddingTop = '60px';
+            elementDescription.style.paddingBottom = '30px';
+
+            editContentDescription.insertBefore(editPanel.element, elementDescription);
+            setTimeout(() => {editPanel.element.style.opacity = '1';}, 200);
+
             elementDescription.setAttribute('contenteditable', 'true');
             element.removeAttribute('draggable');
             element.closest('.task-manager__column').removeAttribute('draggable');
             elementDescription.focus();
 
-            const editDescriptionSucces = document.createElement('div');
-            editDescriptionSucces.classList.add('button-edit__description');
-            editDescriptionSucces.textContent = 'Сохранить изменения';
-            editContentDescription.append(editDescriptionSucces);
+            const buttonSaveEditDescription = document.createElement('div');
+            buttonSaveEditDescription.classList.add('button-edit__description');
+            buttonSaveEditDescription.innerHTML = '<i class="material-icons">save</i><span>Сохранить изменения</span>';
+            editContentDescription.append(buttonSaveEditDescription);
             setTimeout(() => {
-                editDescriptionSucces.style.opacity = '1';
+                buttonSaveEditDescription.style.opacity = '1';
             }, 200);
 
             if (elementDescription.hasAttribute('contenteditable')) {
                 enableEditDescriptionButton.style.display = 'none';
             }
 
-            editDescriptionSucces.addEventListener('click', () => {
-                setTimeout(() => {elementDescription.style.paddingTop = null;}, 200);
-                editPanel.style.opacity = '0';
+            buttonSaveEditDescription.addEventListener('click', () => {
+                setTimeout(() => {
+                    elementDescription.style.paddingTop = null;
+                    elementDescription.style.paddingBottom = null
+                }, 200);
+
+                editPanel.element.style.opacity = '0';
+                setTimeout(() => {editPanel.element.remove()},200);
                 elementDescription.removeAttribute('contenteditable');
                 elementDescription.blur();
                 this.checkForEmptiness(elementDescription, element);
-                editDescriptionSucces.style.opacity = '0';
+                buttonSaveEditDescription.style.opacity = '0';
                 setTimeout(() => {
-                    editDescriptionSucces.remove();
+                    buttonSaveEditDescription.remove();
                 }, 200);
                 enableEditDescriptionButton.style.opacity = '0';
                 enableEditDescriptionButton.style.display = 'block';
@@ -230,59 +222,10 @@ class Note {
         element.addEventListener('dragover', this.dragover.bind(this));
         element.addEventListener('dragleave', this.dragleave.bind(this));
         element.addEventListener('drop', this.drop.bind(this));
-
-        boldButton.addEventListener('click', this.editingBold.bind(this));
-        italicButton.addEventListener('click', this.editingItalic.bind(this));
-        listButton.addEventListener('click', this.editingList.bind(this));
-        listNumberButton.addEventListener('click', this.editingNumericList.bind(this));
-        justifyCenter.addEventListener('click', this.editingjustifyCenter.bind(this));
-        justifyFull.addEventListener('click', this.editingjustifyFull.bind(this));
-        justifyLeft.addEventListener('click', this.editingjustifyLeft.bind(this));
-        justifyRight.addEventListener('click', this.editingjustifyRight.bind(this));
     }
 
     removingPreventKeyBoard (evt) {
         evt.preventDefault();
-    }
-
-    editingBold (evt) {
-        evt.preventDefault();
-        document.execCommand('Bold');
-    }
-
-    editingItalic (evt) {
-        evt.preventDefault();
-        document.execCommand('Italic');
-    }
-
-    editingList (evt) {
-        evt.preventDefault();
-        document.execCommand('insertUnorderedList');
-    }
-
-    editingNumericList (evt) {
-        evt.preventDefault();
-        document.execCommand('insertOrderedList');
-    }
-
-    editingjustifyCenter (evt) {
-        evt.preventDefault();
-        document.execCommand('justifyCenter');
-    }
-
-    editingjustifyFull (evt) {
-        evt.preventDefault();
-        document.execCommand('justifyFull');
-    }
-
-    editingjustifyLeft (evt) {
-        evt.preventDefault();
-        document.execCommand('justifyLeft');
-    }
-
-    editingjustifyRight (evt) {
-        evt.preventDefault();
-        document.execCommand('justifyRight');
     }
 
     checkForEmptiness (elementName, element) {

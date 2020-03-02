@@ -15,11 +15,11 @@ class Column {
         }
 
         element.innerHTML =
-            '<span class="column__close" title="Удалить список">+</span>\n' +
+            '<i class="material-icons _column--delete" title="Удалить список">delete</i>\n' +
             '<p class="column__header"></p>\n' +
             '<div class="column__body"></div>\n' +
             '<p class="column__footer">\n' +
-            '<span data-action-addNote class="action"> + Создать задачу</span>\n' +
+            '<span data-action-addNote class="action"><i class="material-icons">add</i> Создать задачу</span>\n' +
             '</p>';
 
         element.querySelector('.column__header').textContent = title;
@@ -30,24 +30,55 @@ class Column {
             const note = new Note;
             instance.add(note);
 
+            //имитация клика по кнопке редактирвоания поля заголовка
+            note.element.querySelector('.fa-edit._note-title').click();
+
             const noteTitle = note.element.querySelector('.note__title');
 
+            noteTitle.style.opacity = '1';
             noteTitle.setAttribute('contenteditable', 'true');
             noteTitle.focus();
-
         });
 
-        const deleteColumn = element.querySelector('.column__close');
+        const deleteColumn = element.querySelector('._column--delete');
 
         deleteColumn.addEventListener('click',() => {
-            element.classList.add('delete-column');
-            setTimeout( () => {
-                element.remove();
-                App.save();
-            }, 500);
-            if () {
+            if (this.notes.length >= 2){
+                const warningWindow = document.createElement('div');
+                warningWindow.classList.add('warning__container');
+                document.querySelector('.task-manager').append(warningWindow);
+                warningWindow.innerHTML =
+                    '<div class="warning__wrap">\n' +
+                    '    <div class="warning__title">\n' +
+                    '        <p>Вы действительно хотите удалить список?</p>\n' +
+                    '        <p>Все задачи в списке будут удалены</p>\n' +
+                    '    </div>\n' +
+                    '    <div class="warning__variant">\n' +
+                    '        <span class="warning__yes">Да</span>\n' +
+                    '        <span class="warning__no">Нет</span>\n' +
+                    '    </div>\n' +
+                    '</div>';
 
+                document.querySelector('.warning__yes').addEventListener('click', () => {
+                    warningWindow.remove();
+                    element.classList.add('delete-column');
+                    setTimeout( () => {
+                        element.remove();
+                        App.save();
+                    }, 500);
+                });
+
+                document.querySelector('.warning__no').addEventListener('click', () => {
+                    warningWindow.remove();
+                });
+            } else {
+                element.classList.add('delete-column');
+                setTimeout( () => {
+                    element.remove();
+                    App.save();
+                }, 500);
             }
+
         });
 
         const headerElement = element.querySelector('.column__header');

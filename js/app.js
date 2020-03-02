@@ -1,5 +1,5 @@
 const App = {
-    save () {
+    save() {
         const object = {
             columns: {
                 idCounter: Column.IdCounter,
@@ -24,15 +24,15 @@ const App = {
                     });
 
                 object.columns.items.push(column);
-        });
+            });
 
         document.querySelectorAll('.task-manager__note-wrap')
             .forEach(noteElement => {
-               const note = {
-                   id: parseInt(noteElement.getAttribute('data-note-id')),
-                   title: noteElement.querySelector('.note__title').textContent,
-                   content: noteElement.querySelector('.note__description').innerHTML
-               };
+                const note = {
+                    id: parseInt(noteElement.getAttribute('data-note-id')),
+                    title: noteElement.querySelector('.note__title').textContent,
+                    content: noteElement.querySelector('.note__description').innerHTML
+                };
 
                 object.notes.items.push(note)
             });
@@ -42,7 +42,7 @@ const App = {
         localStorage.setItem('Task Manager', json);
     },
 
-    load () {
+    load() {
         if (!localStorage.getItem('Task Manager')) {
             return;
         }

@@ -5,7 +5,11 @@
 body {
     margin: 0;
     background-color: #ffffff;
-    font-family: 'Roboto Mono', monospace;
+    font-family: 'Montserrat', sans-serif;
+}
+
+ol, ul {
+    margin: 0;
 }
 
 .task-manager__wrap {
@@ -26,20 +30,24 @@ body {
     border-radius: 4px;
     box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.19);
     padding: 0;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
+    transition-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 .task-manager__add:hover {
     background-color: rgba(227, 242, 253, 0.7);
 }
 
 .task-manager__add span {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
     line-height: 1;
     font-weight: 700;
     color: rgb(82, 82, 82);
     margin: 0;
     padding: 15px 20px;
+    margin-left: 10px;
     text-align: center;
 }
 
@@ -48,12 +56,12 @@ body {
     position: relative;
     transition: 0.6s;
     transition-timing-function: cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    width: 500px;
+    width: 550px;
     border-right: 1px solid #8080801f;
     border-left: 1px solid #8080801f;
 }
 
-.task-manager__column:hover > span.column__close{
+.task-manager__column:hover > ._column--delete{
     opacity: 1;
 }
 
@@ -65,23 +73,21 @@ body {
 .task-manager__column._under {
     margin-top: 20px;
 }
-.task-manager__column._under > span.column__close,
+.task-manager__column._under > ._column--delete,
 .task-manager__column._under > .column__header,
 .task-manager__column._under > .column__body{
     pointer-events: none;
 }
 
-span.column__close {
+._column--delete {
     position: absolute;
-    top: 0;
-    right: 5px;
+    top: 15px;
+    right: 15px;
     font-size: 40px;
-    transform: rotate(45deg);
     z-index: 9;
     cursor: pointer;
     opacity: 0;
     transition: 0.2s;
-    color: black;
 }
 
 .column__header {
@@ -90,7 +96,7 @@ span.column__close {
     font-weight: 700;
     color: #000000;
     margin: 10px 0 20px;
-    padding: 10px 10px 10px 0;
+    padding: 30px 10px 10px 0;
     display: flex;
     align-items: center;
     position: relative;
@@ -148,7 +154,7 @@ span.column__close {
     font-size: 14px;
     font-weight: 400;
     color: rgb(82, 82, 82);
-    margin: 0;
+    margin: 0 0 0 10px;
     width: 100%;
     height: 100%;
     padding: 5px;
@@ -191,10 +197,6 @@ span.column__close {
     box-shadow: 8px 12px 25px rgba(128, 128, 128, 0.47);
 }
 
-.task-manager__note-wrap span {
-    padding-bottom: 3px;
-}
-
 .note-title__wrap {
     margin-top: 80px;
     margin-bottom: 40px;
@@ -203,6 +205,7 @@ span.column__close {
 
 .note__title,
 .title__width-calculate{
+    min-height: 43px;
     padding: 10px;
     outline: none;
     font-size: 18px;
@@ -221,7 +224,7 @@ span.column__close {
     z-index: -99;
 }
 
-span.far.fa-edit._note-title {
+._edit--note-title {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -233,7 +236,7 @@ span.far.fa-edit._note-title {
     font-size: 20px;
 }
 
-span.far.fa-edit._note-description {
+._edit--note-description {
     position: absolute;
     top: 5px;
     transform: translateY(0%);
@@ -248,13 +251,16 @@ span.far.fa-edit._note-description {
 .button-edit__title {
     position: absolute;
     top: 50px;
-    right: 0;
+    right: 10px;
     color: white;
     padding: 5px;
     cursor: pointer;
     background-color: #0c7e83;
     opacity: 0;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /*border: 1px solid #186370;*/
     /*box-shadow: 2px 5px 8px #08080880;*/
     /*transition: 0.3s;*/
@@ -270,8 +276,16 @@ span.far.fa-edit._note-description {
     background-color: #0c7e83;
     opacity: 0;
     transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     /*border: 1px solid #186370;*/
     /*box-shadow: 2px 5px 8px #08080880;*/
+}
+
+.button-edit__title span,
+.button-edit__description span {
+    margin-left: 10px;
 }
 
 span.note__background {
@@ -301,7 +315,7 @@ span.note__background img {
 }
 
 .note__description {
-    padding: 10px 5px;
+    padding: 25px 5px 20px;
     min-height: 110px;
     margin-top: 5px;
     color: black;
@@ -392,8 +406,10 @@ span.note__background img {
     position: absolute;
     top: 25px;
     right: -230px;
-    transition: 0.2s;
+    transition: 0.4s;
     opacity: 0;
+    transition-timing-function: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    text-align: center;
 }
 
 .task__menu._active {
@@ -418,7 +434,7 @@ span.note__background img {
     position: absolute;
     top: 0;
     left: 5px;
-    width: 100%;
+    width: max-content;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -457,7 +473,7 @@ span.note__background img {
 #stopwatch {
     width: 100%;
     padding-top: 15px;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
 }
 
 #stopwatch span {
@@ -605,4 +621,42 @@ ul.calendar-days li.active-day {
 
 ul.calendar-days li.another-month{
     color: #939393;
+}
+
+
+.warning__container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0 auto;
+    background-color: #00000080;
+    z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.warning__wrap {
+    z-index: 10;
+    background-color: white;
+    padding: 20px;
+}
+
+.warning__variant {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.warning__variant span {
+    max-width: 170px;
+    width: 100%;
+    padding: 10px 20px;
+    background: #046469;
+    color: white;
+    cursor: pointer;
 }
