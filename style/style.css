@@ -90,13 +90,20 @@ ol, ul {
     transition: 0.2s;
 }
 
+.column__header--wrap{
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    /*margin: 10px 0 20px;*/
+    padding: 30px 10px 10px 0;
+    box-sizing: border-box;
+}
+
 .column__header {
     text-align: left;
     font-size: 22px;
     font-weight: 700;
     color: #000000;
-    margin: 10px 0 20px;
-    padding: 30px 10px 10px 0;
     display: flex;
     align-items: center;
     position: relative;
@@ -228,8 +235,20 @@ ol, ul {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: 10px;
+    right: 5px;
     color: #e1e1e1;
+    opacity: 0;
+    transition: 0.4s;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+._edit--column-title {
+    position: absolute;
+    top: 50%;
+    /*transform: translateY(-50%);*/
+    right: 10px;
+    color: #636262;
     opacity: 0;
     transition: 0.4s;
     cursor: pointer;
@@ -248,7 +267,23 @@ ol, ul {
     font-size: 20px;
 }
 
-.button-edit__title {
+.button-save__column{
+    position: absolute;
+    top: 100px;
+    right: 10px;
+    font-size: 12px;
+    color: white;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #0c7e83;
+    opacity: 0;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-save__title {
     position: absolute;
     top: 50px;
     right: 10px;
@@ -261,12 +296,13 @@ ol, ul {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 12px;
     /*border: 1px solid #186370;*/
     /*box-shadow: 2px 5px 8px #08080880;*/
     /*transition: 0.3s;*/
 }
 
-.button-edit__description {
+.button-save__description {
     position: absolute;
     bottom: -15px;
     right: 10px;
@@ -279,6 +315,7 @@ ol, ul {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 12px;
     /*border: 1px solid #186370;*/
     /*box-shadow: 2px 5px 8px #08080880;*/
 }

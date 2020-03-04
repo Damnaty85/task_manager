@@ -11,11 +11,11 @@ class Note {
             '<div class="note-title__wrap">\n' +
             '<div class="note__title"></div>\n' +
             '<div class="title__width-calculate"></div>\n' +
-            '<span class="material-icons _edit--note-title">create</span>\n' +
+            '<span class="material-icons _edit--note-title">more_vert</span>\n' +
             '</div>\n' +
             '<span contenteditable="false">Описание задачи:</span>\n' +
             '<div class="editable__wrap">\n' +
-            '<span class="material-icons _edit--note-description">create</span>\n' +
+            '<span class="material-icons _edit--note-description">more_vert</span>\n' +
             '<div class="note__description"></div>\n' +
             '</div>\n' +
             '<span class="burger__wrap"></span>';
@@ -80,15 +80,17 @@ class Note {
             elementTitle.focus();
             element.removeAttribute('draggable');
 
+            editContentTitle.style = 'margin-top: 50px;margin-bottom: 70px;transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+
             //создаем кнопку сохранить изминения в заголвоке
             const buttonSaveEditTitle = document.createElement('div');
-            buttonSaveEditTitle.classList.add('button-edit__title');
+            buttonSaveEditTitle.classList.add('button-save__title');
             buttonSaveEditTitle.innerHTML = '<i class="material-icons">save</i><span>Сохранить изменения</span>';
             editContentTitle.append(buttonSaveEditTitle);
 
             setTimeout(() => {
                 buttonSaveEditTitle.style.opacity = '1';
-            }, 200);
+            }, 500);
 
             //прячем карандашик, если поле редактируется
             if (elementTitle.hasAttribute('contenteditable')) {
@@ -122,7 +124,7 @@ class Note {
                     //создаем сообщение об ошибке
                     const errorMessage = document.createElement('span');
                     errorMessage.classList.add('error__message');
-                    errorMessage.textContent = 'Достигнута максимальная длинна зоголовка.Максимум ' + charsCount + ' символов';
+                    errorMessage.textContent = 'Достигнута максимальная длинна зоголовка ( Всего символов ' + charsCount + ')';
                     elementTitle.insertAdjacentElement('afterend', errorMessage);
 
                     //отрисовыеем сообщение об ошибке
@@ -151,6 +153,9 @@ class Note {
                 elementTitle.blur();
                 this.checkForEmptiness(elementTitle, element);
                 buttonSaveEditTitle.style.opacity = '0';
+                setTimeout(() =>{
+                    editContentTitle.style = 'margin-top: 80px;margin-bottom: 40px;transition: 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+                },150);
                 setTimeout(() => {
                     buttonSaveEditTitle.remove();
                 }, 200);
@@ -181,7 +186,7 @@ class Note {
             elementDescription.focus();
 
             const buttonSaveEditDescription = document.createElement('div');
-            buttonSaveEditDescription.classList.add('button-edit__description');
+            buttonSaveEditDescription.classList.add('button-save__description');
             buttonSaveEditDescription.innerHTML = '<i class="material-icons">save</i><span>Сохранить изменения</span>';
             editContentDescription.append(buttonSaveEditDescription);
             setTimeout(() => {

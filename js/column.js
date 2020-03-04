@@ -16,7 +16,10 @@ class Column {
 
         element.innerHTML =
             '<i class="material-icons _column--delete" title="Удалить список">delete</i>\n' +
-            '<p class="column__header"></p>\n' +
+            '<div class="column__header--wrap">\n' +
+            '<span class="column__header"></span>\n' +
+            '<span class="material-icons _edit--column-title">more_vert</span>\n' +
+            '</div>\n' +
             '<div class="column__body"></div>\n' +
             '<p class="column__footer">\n' +
             '<span data-action-addNote class="action"><i class="material-icons">add</i> Создать задачу</span>\n' +
@@ -25,6 +28,10 @@ class Column {
         element.querySelector('.column__header').textContent = title;
 
         const spanActionAddNote = element.querySelector('[data-action-addNote]');
+
+        const columnHeaderWrap = element.querySelector('.column__header--wrap');
+        const enableEditTitleColumnButton = element.querySelector('._edit--column-title');
+        const headerElement = element.querySelector('.column__header');
 
         spanActionAddNote.addEventListener('click', (evt) => {
             const note = new Note;
@@ -81,22 +88,58 @@ class Column {
 
         });
 
-        const headerElement = element.querySelector('.column__header');
-
-        headerElement.addEventListener('dblclick', (evt) => {
-            headerElement.setAttribute('contenteditable', 'true');
-            headerElement.focus();
-            App.save();
+        //показываем кнопку редактирования при наведении
+        columnHeaderWrap.addEventListener('mouseenter', () => {
+            enableEditTitleColumnButton.style.opacity = '1';
         });
 
-        headerElement.addEventListener('blur', (evt) => {
-            headerElement.removeAttribute('contenteditable');
+        //редактирование заголовка списка задач
+        enableEditTitleColumnButton.addEventListener('click', () => {
+            headerElement.setAttribute('contenteditable', 'true');
+            element.removeAttribute('draggable');
+            headerElement.focus();
 
-            if (!headerElement.textContent.trim().length) {
-                element.remove();
+            columnHeaderWrap.style ='margin-bottom:70px;margin-top:20px;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+
+            //создаем кнопку сохранения результата
+            const buttonSaveEditTitleColumn = document.createElement('div');
+            buttonSaveEditTitleColumn.classList.add('button-save__column');
+            buttonSaveEditTitleColumn.innerHTML = '<i class="material-icons">save</i><span>Сохранить изменения</span>';
+            columnHeaderWrap.append(buttonSaveEditTitleColumn);
+
+            setTimeout(() => {
+                buttonSaveEditTitleColumn.style.opacity = '1';
+            }, 200);
+
+            if (headerElement.hasAttribute('contenteditable')) {
+                enableEditTitleColumnButton.style.display = 'none';
             }
 
-            App.save();
+            //событие кнопки сохранения результата
+            buttonSaveEditTitleColumn.addEventListener('click', () => {
+                buttonSaveEditTitleColumn.style.opacity = '0';
+                setTimeout(() => {
+                    buttonSaveEditTitleColumn.remove();
+                }, 200);
+                setTimeout(() => {
+                    columnHeaderWrap.style ='margin-top:20px;margin-bottom:40px;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+                },150);
+                headerElement.removeAttribute('contenteditable');
+
+                enableEditTitleColumnButton.style.opacity = '0';
+                enableEditTitleColumnButton.style.display = 'block';
+
+                if (!headerElement.textContent.trim().length) {
+                    element.remove();
+                }
+                element.setAttribute('draggable', 'true');
+                App.save();
+            });
+        });
+
+        //убираем кнопку редактирования при потере наведении
+        columnHeaderWrap.addEventListener('mouseleave', () => {
+            enableEditTitleColumnButton.style.opacity = '0';
         });
 
         element.addEventListener('dragstart', this.dragstart.bind(this));
