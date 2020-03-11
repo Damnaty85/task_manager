@@ -7,5 +7,7 @@ document.querySelector('[data-action-addColumn]').addEventListener('click',  (ev
     column.element.querySelector('.column__header').setAttribute('contenteditable', 'true');
     column.element.querySelector('.column__header').focus();
 
+    column.element.querySelector('._edit--column-title').click();
+
     App.save();
 });

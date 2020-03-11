@@ -14,6 +14,7 @@ class Note {
             '<span class="material-icons _edit--note-title">more_vert</span>\n' +
             '</div>\n' +
             '<span contenteditable="false">Описание задачи:</span>\n' +
+            '<div class="description__collapse collapse"><span>Свернуть описание</span><i class="material-icons">expand_less</i></div>\n' +
             '<div class="editable__wrap">\n' +
             '<span class="material-icons _edit--note-description">more_vert</span>\n' +
             '<div class="note__description"></div>\n' +
@@ -28,6 +29,8 @@ class Note {
         const enableEditDescriptionButton = element.querySelector('._edit--note-description');
         const editContentTitle = element.querySelector('.note-title__wrap');
         const editContentDescription = element.querySelector('.editable__wrap');
+
+        const descriptionCollapse = element.querySelector('.description__collapse');
 
         elementTitle.textContent = title;
         elementDescription.innerHTML = content;
@@ -68,6 +71,43 @@ class Note {
             element.setAttribute('data-note-id', Note.IdCounter);
             Note.IdCounter++;
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            this.activateCollapseLine (elementDescription, descriptionCollapse);
+            this.extendCollapseDescription (elementDescription, descriptionCollapse, 0.04)
+        });
+
+        //создаем экземпляр наблюдателя
+
+        // let observer = new MutationObserver((mutations) => {
+        //     console.log(mutations);
+        //     for (let mutation of mutations) {
+        //         if (mutation.type == 'childList') {
+        //             console.log('Было изминение или удаление потомка из DOM')
+        //         } else if (mutation.type == 'attributeFilter') {
+        //             console.log('Произошло добавление стилей потомкам DOM')
+        //         }
+        //     }
+        // });
+        //
+        // const config = {
+        //     childList: true,
+        //     attributeFilter: ['style'],
+        //     subtree: true
+        // };
+        //
+        // observer.observe(elementDescription, config);
+
+        elementDescription.addEventListener('DOMSubtreeModified', () => {
+            this.activateCollapseLine (elementDescription, descriptionCollapse);
+            this.extendCollapseDescription (elementDescription, descriptionCollapse, 0.04);
+        });
+
+        // elementDescription.addEventListener('keydown', (evt) => {
+        //     if (evt.keyCode == 13) {
+        //         document.execCommand("defaultParagraphSeparator", false, "p");
+        //     }
+        // });
 
         //редактирование заголовка карточки
         editContentTitle.addEventListener('mouseenter', () => {
@@ -117,28 +157,11 @@ class Note {
                         if (evt.keyCode == 8 || evt.keyCode == 37){
                             elementTitle.removeEventListener('keydown', this.removingPreventKeyBoard);
                         }
+                        elementTitle.removeEventListener('input', this.createErrorMessage);
                     });
 
-                    let charsCount = elementTitle.textContent.length;
-
-                    //создаем сообщение об ошибке
-                    const errorMessage = document.createElement('span');
-                    errorMessage.classList.add('error__message');
-                    errorMessage.textContent = 'Достигнута максимальная длинна зоголовка ( Всего символов ' + charsCount + ')';
-                    elementTitle.insertAdjacentElement('afterend', errorMessage);
-
-                    //отрисовыеем сообщение об ошибке
-                    setTimeout(() => {
-                        errorMessage.style.opacity = '1';
-                        //задержка показа сообщения об ошибке
-                        setTimeout(() => {
-                            errorMessage.style.opacity = null;
-                            //задержка перед удалением ссобщения из DOM чтобы все плавненько
-                            setTimeout(() => {
-                                errorMessage.remove();
-                            },3200);
-                        }, 3000);
-                    }, 200)
+                    //вызываем функцию с ошибкой
+                    this.createErrorMessage (elementTitle)
 
                 } else {
                     //если заголовок удовлетворяет условиям разрешаем сохранить изменения
@@ -174,8 +197,9 @@ class Note {
         });
 
         enableEditDescriptionButton.addEventListener('click', () => {
-            elementDescription.style.paddingTop = '60px';
-            elementDescription.style.paddingBottom = '30px';
+            elementDescription.style = 'padding-top: 60px; padding-bottom: 60px;';
+
+            element.querySelector('.description__collapse').style.pointerEvents = 'none';
 
             editContentDescription.insertBefore(editPanel.element, elementDescription);
             setTimeout(() => {editPanel.element.style.opacity = '1';}, 200);
@@ -203,11 +227,12 @@ class Note {
                     elementDescription.style.paddingBottom = null
                 }, 200);
 
+                element.querySelector('.description__collapse').style.pointerEvents = null;
+
                 editPanel.element.style.opacity = '0';
                 setTimeout(() => {editPanel.element.remove()},200);
                 elementDescription.removeAttribute('contenteditable');
                 elementDescription.blur();
-                this.checkForEmptiness(elementDescription, element);
                 buttonSaveEditDescription.style.opacity = '0';
                 setTimeout(() => {
                     buttonSaveEditDescription.remove();
@@ -227,6 +252,87 @@ class Note {
         element.addEventListener('dragover', this.dragover.bind(this));
         element.addEventListener('dragleave', this.dragleave.bind(this));
         element.addEventListener('drop', this.drop.bind(this));
+    }
+
+    activateCollapseLine (descriptionElement, buttonCollapse) {
+        let childArray = [];
+        let childrenElement = descriptionElement.querySelectorAll('*');
+
+        let totalHeight;
+
+        childrenElement.forEach((item) => {
+            let childrenElementHeight = item.getBoundingClientRect().height;
+            childArray.push(childrenElementHeight);
+            totalHeight = childArray.reduce(function(a, b) {
+                return a + b;
+            });
+
+            if (totalHeight > 200){
+                buttonCollapse.style = 'display: flex;';
+                setTimeout(() => {
+                    buttonCollapse.style = 'display: flex;opacity: 1; transition: 0.3s;';
+                }, 200);
+            } else {
+                buttonCollapse.style = 'opacity: 0;transition: 0.3s;';
+                setTimeout(() => {
+                    buttonCollapse.style = 'display: none;';
+                }, 200);
+            }
+        });
+    }
+
+    extendCollapseDescription (descriptionElement, buttonCollapse, animationSpeed) {
+        let countArray;
+        let childrenElement = descriptionElement.querySelectorAll('*');
+
+        buttonCollapse.addEventListener('click', () => {
+            if (buttonCollapse.classList.contains('collapse')) {
+                this.element.querySelector('._edit--note-description').style.display = 'none';
+
+                buttonCollapse.classList.add('extend');
+                buttonCollapse.classList.remove('collapse');
+                buttonCollapse.innerHTML = '<span>Развернуть описание</span><i class="material-icons">expand_more</i>';
+
+                for (let i = 0; i < childrenElement.length; ++i) {
+                    countArray = childrenElement.length;
+                    childrenElement[i].style = 'opacity: 0; transition:' + animationSpeed * (countArray - i) + 's; transition-delay:' + animationSpeed * (countArray - i) + 's;';
+                }
+
+            } else if (buttonCollapse.classList.contains('extend')) {
+                this.element.querySelector('._edit--note-description').style.display = null;
+
+                buttonCollapse.classList.add('collapse');
+                buttonCollapse.classList.remove('extend');
+                buttonCollapse.innerHTML = '<span>Свернуть описание</span><i class="material-icons">expand_less</i>';
+
+                for (let i = 0; i < childrenElement.length; ++i) {
+                    childrenElement[i].style = 'opacity: 1; transition:' + animationSpeed * i + 's;transition-delay:' + animationSpeed * i + 's;';
+                }
+            }
+        });
+    }
+
+    createErrorMessage (titleSelector) {
+        //считаем кол-во символов в строке
+        let charsCount = titleSelector.textContent.length;
+        //создаем сообщение об ошибке и анимацию
+        const errorMessage = document.createElement('span');
+        errorMessage.classList.add('error__message');
+        errorMessage.textContent = 'Достигнута максимальная длинна зоголовка ( Всего символов ' + charsCount + ')';
+        titleSelector.insertAdjacentElement('afterend', errorMessage);
+
+        //отрисовыеем сообщение об ошибке
+        setTimeout(() => {
+            errorMessage.style.opacity = '1';
+            //задержка показа сообщения об ошибке
+            setTimeout(() => {
+                errorMessage.style.opacity = null;
+                //задержка перед удалением ссобщения из DOM чтобы все плавненько
+                setTimeout(() => {
+                    errorMessage.remove();
+                },3200);
+            }, 3000);
+        }, 200);
     }
 
     removingPreventKeyBoard (evt) {

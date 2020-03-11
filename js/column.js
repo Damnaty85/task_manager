@@ -38,7 +38,7 @@ class Column {
             instance.add(note);
 
             //имитация клика по кнопке редактирвоания поля заголовка
-            note.element.querySelector('.fa-edit._note-title').click();
+            note.element.querySelector('._edit--note-title').click();
 
             const noteTitle = note.element.querySelector('.note__title');
 
@@ -122,7 +122,7 @@ class Column {
                     buttonSaveEditTitleColumn.remove();
                 }, 200);
                 setTimeout(() => {
-                    columnHeaderWrap.style ='margin-top:20px;margin-bottom:40px;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+                    columnHeaderWrap.style ='margin-top:20px;margin-bottom:30px;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
                 },150);
                 headerElement.removeAttribute('contenteditable');
 

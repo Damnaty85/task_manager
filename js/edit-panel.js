@@ -23,6 +23,7 @@ class EditPanel {
         const justifyLeft = element.querySelector('.justifyLeft');
         const justifyRight = element.querySelector('.justifyRight');
 
+
         boldButton.addEventListener('click', this.editingBold.bind(this));
         italicButton.addEventListener('click', this.editingItalic.bind(this));
         listButton.addEventListener('click', this.editingList.bind(this));
