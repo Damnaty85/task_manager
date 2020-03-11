@@ -73,8 +73,7 @@ class Note {
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            this.activateCollapseLine (elementDescription, descriptionCollapse);
-            this.extendCollapseDescription (elementDescription, descriptionCollapse, 0.04)
+            this.activateCollapseLine (elementDescription, descriptionCollapse, 0.04);
         });
 
         //создаем экземпляр наблюдателя
@@ -99,8 +98,7 @@ class Note {
         // observer.observe(elementDescription, config);
 
         elementDescription.addEventListener('DOMSubtreeModified', () => {
-            this.activateCollapseLine (elementDescription, descriptionCollapse);
-            this.extendCollapseDescription (elementDescription, descriptionCollapse, 0.04);
+            this.activateCollapseLine (elementDescription, descriptionCollapse, 0.04);
         });
 
         // elementDescription.addEventListener('keydown', (evt) => {
@@ -254,9 +252,11 @@ class Note {
         element.addEventListener('drop', this.drop.bind(this));
     }
 
-    activateCollapseLine (descriptionElement, buttonCollapse) {
+    activateCollapseLine (descriptionElement, buttonCollapse, animationSpeed) {
         let childArray = [];
         let childrenElement = descriptionElement.querySelectorAll('*');
+
+        let countArray;
 
         let totalHeight;
 
@@ -279,11 +279,6 @@ class Note {
                 }, 200);
             }
         });
-    }
-
-    extendCollapseDescription (descriptionElement, buttonCollapse, animationSpeed) {
-        let countArray;
-        let childrenElement = descriptionElement.querySelectorAll('*');
 
         buttonCollapse.addEventListener('click', () => {
             if (buttonCollapse.classList.contains('collapse')) {
@@ -310,6 +305,10 @@ class Note {
                 }
             }
         });
+    }
+
+    extendCollapseDescription (descriptionElement, buttonCollapse, animationSpeed) {
+        let childrenElement = descriptionElement.querySelectorAll('*');
     }
 
     createErrorMessage (titleSelector) {
