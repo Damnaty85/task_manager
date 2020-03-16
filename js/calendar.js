@@ -9,13 +9,13 @@ class Calendar {
             '    <div class="left-side">\n' +
             '        <div class="current-day">\n' +
             '            <div class="calendar-left-side-day"></div>\n' +
-            '            <div class="calendar-left-side-day-of-week"></div>\n' +
             '            <div class="calendar-left-side-month"></div>\n' +
+            '            <div class="calendar-left-side-day-of-week"></div>\n' +
             '        <div class="calendar-change-year">\n' +
             '            <div class="calendar-change-year-slider">\n' +
-            '                <span class="fa fa-caret-left calendar-change-year-slider-prev"></span>\n' +
+            '                <span class="material-icons calendar-change-year-slider-prev">navigate_before</span>\n' +
             '                <span class="calendar-current-year"></span>\n' +
-            '                <span class="fa fa-caret-right calendar-change-year-slider-next"></span>\n' +
+            '                <span class="material-icons calendar-change-year-slider-next">navigate_next</span>\n' +
             '            </div>\n' +
             '        </div>\n' +
             '        </div>\n' +

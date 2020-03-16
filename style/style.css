@@ -359,7 +359,6 @@ span.note__background img {
     min-height: 60px;
     margin-top: 5px;
     color: black;
-    margin-bottom: 5px;
     line-height: 24px;
     width: 100%;
     outline: 1px solid #8080801f;
@@ -565,9 +564,33 @@ span.note__background img {
     background-color: #e53935;
 }
 
+.date__wrap {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 20px);
+    background-color: whitesmoke;
+    padding: 20px;
+    box-shadow: 20px 30px 20px -10px #a9a9a97a;
+    display: none;
+}
+
+.left-side {
+    height: 100%;
+    width: 150px;
+}
+
+.current-day {
+    font-size: 19px;
+}
+
+.calendar-left-side-day {
+    font-size: 30px;
+}
+
 div#calendar {
     color: black;
-    display: none;
+    display: flex;
+    align-items: flex-start;
 }
 
 .right-side {
@@ -577,7 +600,11 @@ div#calendar {
     justify-content: flex-start;
 }
 
-.calendar-month-list {width: 100%;}
+.calendar-month-list {
+    width: 100%;
+    border-bottom: 1px solid #80808045;
+    padding-bottom: 11px;
+}
 
 ul.calendar-month {
     display: flex;
@@ -592,6 +619,8 @@ ul.calendar-month {
 ul.calendar-month li {
     font-size: 10px;
     text-transform: uppercase;
+    width: 80px;
+    text-align: center;
 }
 
 ul.calendar-month li.active {
@@ -619,6 +648,9 @@ ul.calendar-week li {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 80px;
+    text-align: center;
+    margin: 0 auto;
 }
 
 .calendar-day-list {
@@ -639,9 +671,11 @@ ul.calendar-days {
 
 ul.calendar-days li {
     height: 50px;
+    width: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 0 auto;
 }
 
 ul.calendar-days li.selected-day {
@@ -663,6 +697,11 @@ ul.calendar-days li.another-month{
     color: #939393;
 }
 
+.calendar-change-year-slider {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
 
 .warning__container {
     position: absolute;
@@ -703,9 +742,9 @@ ul.calendar-days li.another-month{
 
 .description__collapse {
     display: none;
+    margin-top: 5px;
     align-items: center;
     justify-content: space-between;
-    margin-top: 5px;
     padding: 5px;
     background-color: #0c7e83;
     color: white;

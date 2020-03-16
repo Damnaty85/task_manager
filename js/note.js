@@ -37,8 +37,8 @@ class Note {
 
         const editPanel = new EditPanel;
 
-        // const calendar = new Calendar;
-        // element.append(calendar.element);
+        const calendar = new Calendar;
+        element.append(calendar.element);
 
         const timer = new Timer;
         element.append(timer.element);
@@ -73,39 +73,55 @@ class Note {
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            this.activateCollapseLine (elementDescription, descriptionCollapse, 0.04);
+            this.checkingElementHeight(elementDescription, descriptionCollapse);
         });
 
         //создаем экземпляр наблюдателя
 
-        // let observer = new MutationObserver((mutations) => {
-        //     console.log(mutations);
-        //     for (let mutation of mutations) {
-        //         if (mutation.type == 'childList') {
-        //             console.log('Было изминение или удаление потомка из DOM')
-        //         } else if (mutation.type == 'attributeFilter') {
-        //             console.log('Произошло добавление стилей потомкам DOM')
-        //         }
-        //     }
-        // });
-        //
-        // const config = {
-        //     childList: true,
-        //     attributeFilter: ['style'],
-        //     subtree: true
-        // };
-        //
-        // observer.observe(elementDescription, config);
-
-        elementDescription.addEventListener('DOMSubtreeModified', () => {
-            this.activateCollapseLine (elementDescription, descriptionCollapse, 0.04);
+        let observer = new MutationObserver(() => {
+            this.checkingElementHeight(elementDescription, descriptionCollapse);
         });
 
-        // elementDescription.addEventListener('keydown', (evt) => {
-        //     if (evt.keyCode == 13) {
-        //         document.execCommand("defaultParagraphSeparator", false, "p");
-        //     }
-        // });
+        const config = {
+            childList: true
+        };
+
+        observer.observe(elementDescription, config);
+
+        descriptionCollapse.addEventListener('click', () => {
+            let countArray;
+            let childrenElement = elementDescription.childNodes;
+
+            if (descriptionCollapse.classList.contains('collapse')) {
+                this.element.querySelector('._edit--note-description').style.display = 'none';
+
+                descriptionCollapse.classList.add('extend');
+                descriptionCollapse.classList.remove('collapse');
+                descriptionCollapse.innerHTML = '<span>Развернуть описание</span><i class="material-icons">expand_more</i>';
+
+                for (let i = 0; i < childrenElement.length; ++i) {
+                    countArray = childrenElement.length;
+                    childrenElement[i].style = 'opacity: 0; transition:' + 0.04 * (countArray - i) + 's; transition-delay:' + 0.04 * (countArray - i) + 's;';
+                }
+
+            } else if (descriptionCollapse.classList.contains('extend')) {
+                this.element.querySelector('._edit--note-description').style.display = null;
+
+                descriptionCollapse.classList.add('collapse');
+                descriptionCollapse.classList.remove('extend');
+                descriptionCollapse.innerHTML = '<span>Свернуть описание</span><i class="material-icons">expand_less</i>';
+
+                for (let i = 0; i < childrenElement.length; ++i) {
+                    childrenElement[i].style = 'opacity: 1; transition:' + 0.04 * i + 's;transition-delay:' + 0.04 * i + 's;';
+                }
+            }
+        });
+
+        elementDescription.addEventListener('keydown', (evt) => {
+            if (evt.keyCode == 13) {
+                document.execCommand("defaultParagraphSeparator", false, "p");
+            }
+        });
 
         //редактирование заголовка карточки
         editContentTitle.addEventListener('mouseenter', () => {
@@ -220,6 +236,23 @@ class Note {
             }
 
             buttonSaveEditDescription.addEventListener('click', () => {
+                //находим все ноды с текстовым типом
+                //другого пути решения проблемы пока не нашел
+                let stringArrayDescription = elementDescription.childNodes;
+
+                //перебераем все ноды внутри описания
+                stringArrayDescription.forEach((item) => {
+                    let newTag;
+                    //условием выбираем ноды без тегов
+                    if (item.nodeType === Node.TEXT_NODE){
+                        //создаем тег сами
+                        newTag = document.createElement('p');
+                        newTag.textContent = item.nodeValue;
+                        //заменяем текст на <p>текст</p>
+                        item.replaceWith(newTag);
+                    }
+                });
+
                 setTimeout(() => {
                     elementDescription.style.paddingTop = null;
                     elementDescription.style.paddingBottom = null
@@ -237,6 +270,8 @@ class Note {
                 }, 200);
                 enableEditDescriptionButton.style.opacity = '0';
                 enableEditDescriptionButton.style.display = 'block';
+
+                App.save();
             });
         });
 
@@ -252,63 +287,32 @@ class Note {
         element.addEventListener('drop', this.drop.bind(this));
     }
 
-    activateCollapseLine (descriptionElement, buttonCollapse, animationSpeed) {
+    checkingElementHeight (elementDescription, descriptionCollapse) {
         let childArray = [];
-        let childrenElement = descriptionElement.querySelectorAll('*');
-
-        let countArray;
-
+        let childrenElement = elementDescription.querySelectorAll('*');
         let totalHeight;
 
         childrenElement.forEach((item) => {
-            let childrenElementHeight = item.getBoundingClientRect().height;
+            let childrenElementHeight = item.offsetHeight;
             childArray.push(childrenElementHeight);
-            totalHeight = childArray.reduce(function(a, b) {
-                return a + b;
-            });
 
+            const reducer = (accumulator, currentValue) => accumulator + currentValue;
+
+            totalHeight = childArray.reduce(reducer);
+
+            //функция проверяет высоту и позволяет свернуть описание
             if (totalHeight > 200){
-                buttonCollapse.style = 'display: flex;';
+                descriptionCollapse.style = 'display: flex;';
                 setTimeout(() => {
-                    buttonCollapse.style = 'display: flex;opacity: 1; transition: 0.3s;';
+                    descriptionCollapse.style = 'display: flex;opacity: 1; transition: 0.3s;';
                 }, 200);
             } else {
-                buttonCollapse.style = 'opacity: 0;transition: 0.3s;';
+                descriptionCollapse.style = 'opacity: 0;transition: 0.3s;';
                 setTimeout(() => {
-                    buttonCollapse.style = 'display: none;';
+                    descriptionCollapse.style = 'display: none;';
                 }, 200);
             }
         });
-
-        buttonCollapse.addEventListener('click', () => {
-            if (buttonCollapse.classList.contains('collapse')) {
-                this.element.querySelector('._edit--note-description').style.display = 'none';
-
-                buttonCollapse.classList.add('extend');
-                buttonCollapse.classList.remove('collapse');
-                buttonCollapse.innerHTML = '<span>Развернуть описание</span><i class="material-icons">expand_more</i>';
-
-                for (let i = 0; i < childrenElement.length; ++i) {
-                    countArray = childrenElement.length;
-                    childrenElement[i].style = 'opacity: 0; transition:' + animationSpeed * (countArray - i) + 's; transition-delay:' + animationSpeed * (countArray - i) + 's;';
-                }
-
-            } else if (buttonCollapse.classList.contains('extend')) {
-                this.element.querySelector('._edit--note-description').style.display = null;
-
-                buttonCollapse.classList.add('collapse');
-                buttonCollapse.classList.remove('extend');
-                buttonCollapse.innerHTML = '<span>Свернуть описание</span><i class="material-icons">expand_less</i>';
-
-                for (let i = 0; i < childrenElement.length; ++i) {
-                    childrenElement[i].style = 'opacity: 1; transition:' + animationSpeed * i + 's;transition-delay:' + animationSpeed * i + 's;';
-                }
-            }
-        });
-    }
-
-    extendCollapseDescription (descriptionElement, buttonCollapse, animationSpeed) {
-        let childrenElement = descriptionElement.querySelectorAll('*');
     }
 
     createErrorMessage (titleSelector) {
