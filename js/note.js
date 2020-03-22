@@ -8,6 +8,7 @@ class Note {
 
         element.innerHTML =
             '<span class="note__background" contenteditable="false"><img src="image/background_03.png" alt=""></span>\n' +
+            '<span class="burger__wrap"></span>\n' +
             '<div class="note-title__wrap">\n' +
             '<div class="note__title"></div>\n' +
             '<div class="title__width-calculate"></div>\n' +
@@ -18,8 +19,9 @@ class Note {
             '<div class="editable__wrap">\n' +
             '<span class="material-icons _edit--note-description">more_vert</span>\n' +
             '<div class="note__description"></div>\n' +
-            '</div>\n' +
-            '<span class="burger__wrap"></span>';
+            '</div>';
+
+        let elementDescriptionHeight;
 
         const elementTitle = element.querySelector('.note__title');
         const elementTitleHidden = element.querySelector('.title__width-calculate');
@@ -38,7 +40,8 @@ class Note {
         const editPanel = new EditPanel;
 
         const calendar = new Calendar;
-        element.append(calendar.element);
+        // element.append(calendar.element);
+        editContentTitle.insertAdjacentElement('afterend', calendar.element);
 
         const timer = new Timer;
         element.append(timer.element);
@@ -92,6 +95,19 @@ class Note {
             let countArray;
             let childrenElement = elementDescription.childNodes;
 
+            let transitionArray = [];
+            let totalTransition;
+
+            childrenElement.forEach((children) => {
+                //получаем скорость анимации всех элементов и заносим в массив
+                let allChildrenTransition = Number(window.getComputedStyle(children, null).transitionDelay.replace('s', ' '));
+                transitionArray.push(allChildrenTransition);
+
+                const reducer = (accumulator, currentValue) => accumulator + currentValue;
+                //сумма скорости анимации всех элементов
+                totalTransition = transitionArray.reduce(reducer);
+            });
+
             if (descriptionCollapse.classList.contains('collapse')) {
                 this.element.querySelector('._edit--note-description').style.display = 'none';
 
@@ -100,8 +116,9 @@ class Note {
                 descriptionCollapse.innerHTML = '<span>Развернуть описание</span><i class="material-icons">expand_more</i>';
 
                 for (let i = 0; i < childrenElement.length; ++i) {
-                    countArray = childrenElement.length;
-                    childrenElement[i].style = 'opacity: 0; transition:' + 0.04 * (countArray - i) + 's; transition-delay:' + 0.04 * (countArray - i) + 's;';
+                    countArray = childrenElement.length - i;
+                    childrenElement[i].style = `opacity: 0; transition:${0.04 * countArray}s; transition-delay:${0.04 * countArray}s;`;
+                    elementDescription.style = `height:0px; transition:${totalTransition}s`;
                 }
 
             } else if (descriptionCollapse.classList.contains('extend')) {
@@ -112,7 +129,8 @@ class Note {
                 descriptionCollapse.innerHTML = '<span>Свернуть описание</span><i class="material-icons">expand_less</i>';
 
                 for (let i = 0; i < childrenElement.length; ++i) {
-                    childrenElement[i].style = 'opacity: 1; transition:' + 0.04 * i + 's;transition-delay:' + 0.04 * i + 's;';
+                    childrenElement[i].style = `opacity: 1; transition:${0.04 * i}s;transition-delay:${0.04 * i}s;`;
+                    elementDescription.style = `height:${elementDescriptionHeight}px; transition:${0.04 * i}s`;
                 }
             }
         });
@@ -151,7 +169,7 @@ class Note {
                 enableEditTitleButton.style.display = 'none';
             }
 
-            //странная валидация, но я так хочу
+            //ограничение по символам поле заголовка
             elementTitle.addEventListener('input', () => {
 
                 let elementTitleContent = elementTitle.textContent;
@@ -236,20 +254,25 @@ class Note {
             }
 
             buttonSaveEditDescription.addEventListener('click', () => {
-                //находим все ноды с текстовым типом
-                //другого пути решения проблемы пока не нашел
+
+                //сохраняем в переменную высоту поля описания
+                //85 это значение 120 падинги при активном редактирование - 35 падинги в обычном состоянии
+                elementDescriptionHeight = elementDescription.offsetHeight  - 85;
+                elementDescription.style = `height:${elementDescriptionHeight}px;`;
+
+                //находим все ноды
                 let stringArrayDescription = elementDescription.childNodes;
 
                 //перебераем все ноды внутри описания
-                stringArrayDescription.forEach((item) => {
+                stringArrayDescription.forEach((node) => {
                     let newTag;
                     //условием выбираем ноды без тегов
-                    if (item.nodeType === Node.TEXT_NODE){
+                    if (node.nodeType === Node.TEXT_NODE){
                         //создаем тег сами
                         newTag = document.createElement('p');
-                        newTag.textContent = item.nodeValue;
+                        newTag.textContent = node.nodeValue;
                         //заменяем текст на <p>текст</p>
-                        item.replaceWith(newTag);
+                        node.replaceWith(newTag);
                     }
                 });
 
@@ -289,11 +312,13 @@ class Note {
 
     checkingElementHeight (elementDescription, descriptionCollapse) {
         let childArray = [];
-        let childrenElement = elementDescription.querySelectorAll('*');
+        let childrenElement = elementDescription.childNodes;
         let totalHeight;
 
         childrenElement.forEach((item) => {
+            //находим высоту всех элементов
             let childrenElementHeight = item.offsetHeight;
+
             childArray.push(childrenElementHeight);
 
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
@@ -373,7 +398,6 @@ class Note {
             return
         }
         this.element.classList.add('under');
-        console.log('add class')
     }
 
     dragover(evt) {
@@ -388,7 +412,6 @@ class Note {
             return;
         }
         this.element.classList.remove('under');
-        console.log('remove class');
     }
 
     drop(evt) {

@@ -6,7 +6,7 @@ class TaskMenu {
 
         element.innerHTML =
             // '<span class="detail__task">Посмотреть</span>\n' +
-            // '<span class="edit__task">Редактировать</span>\n' +
+            // '<span class="edit__task">Редактировать задачу</span>\n' +
             '<span class="remove__task">Удалить задачу</span>\n' +
             '</span>';
 
@@ -25,6 +25,8 @@ class TaskMenu {
     //
     // editedTask () {
     //     console.log('edit task');
+    //     document.querySelector('._edit--note-title').click();
+    //     document.querySelector('._edit--note-description').click();
     // }
 
     removedTask () {

@@ -122,7 +122,7 @@ class Column {
                     buttonSaveEditTitleColumn.remove();
                 }, 200);
                 setTimeout(() => {
-                    columnHeaderWrap.style ='margin-top:20px;margin-bottom:30px;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
+                    columnHeaderWrap.style ='margin-top:30px;margin-bottom:0;transition: 0.5s all cubic-bezier(0.18, 0.89, 0.32, 1.28);';
                 },150);
                 headerElement.removeAttribute('contenteditable');
 

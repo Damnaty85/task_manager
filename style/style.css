@@ -4,12 +4,11 @@
 
 body {
     margin: 0;
-    background-color: #ffffff;
     font-family: 'Montserrat', sans-serif;
 }
 
 ol, ul {
-    margin: 0;
+    margin: 5px 0;
 }
 
 p {
@@ -96,10 +95,9 @@ p {
 
 .column__header--wrap{
     position: relative;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: 30px;
     /*margin: 10px 0 20px;*/
-    padding: 10px 10px 10px 0;
+    padding: 10px 0;
     box-sizing: border-box;
 }
 
@@ -111,18 +109,11 @@ p {
     display: flex;
     align-items: center;
     position: relative;
-    background-color: #ffffff;
     min-height: 46px;
     outline: none;
-}
-
-.column__header:before {
-    content: '';
-    width: 100%;
-    position: absolute;
-    top: 110%;
-    height: 3px;
-    background-color: #0000000a;
+    padding: 0 5px;
+    border-radius: 10px;
+    border: 1px solid #80808033;
 }
 
 .error__message {
@@ -189,7 +180,7 @@ p {
     cursor: default;
     width: 100%;
     background: #fbfbfb;
-    border: none;
+    border-radius: 10px;
     text-align: left;
     font-size: 14px;
     line-height: 1.3;
@@ -200,7 +191,6 @@ p {
     transition: 0.3s linear;
     z-index: 1;
     position: relative;
-    box-shadow: 0px 2px 10px rgba(128, 128, 128, 0.82);
 }
 
 .task-manager__note-wrap:hover {
@@ -249,7 +239,7 @@ p {
 ._edit--column-title {
     position: absolute;
     top: 50%;
-    /*transform: translateY(-50%);*/
+    transform: translateY(-50%);
     right: 10px;
     color: #636262;
     opacity: 0;
@@ -356,7 +346,6 @@ span.note__background img {
 
 .note__description {
     padding: 25px 5px 10px;
-    min-height: 60px;
     margin-top: 5px;
     color: black;
     line-height: 24px;
@@ -435,7 +424,7 @@ span.note__background img {
 /*}*/
 
 .task__menu {
-    width: 170px;
+    width: 190px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -565,12 +554,11 @@ span.note__background img {
 }
 
 .date__wrap {
-    position: absolute;
-    top: 0;
-    left: calc(100% + 20px);
-    background-color: whitesmoke;
-    padding: 20px;
-    box-shadow: 20px 30px 20px -10px #a9a9a97a;
+    padding: 10px 10px;
+    border-bottom: 1px solid #a9a9a945;
+    margin-bottom: 20px;
+    background: #00000005;
+    box-shadow: 1px 3px 15px 10px #80808052;
     display: none;
 }
 
@@ -581,16 +569,22 @@ span.note__background img {
 
 .current-day {
     font-size: 19px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: center;
 }
 
 .calendar-left-side-day {
-    font-size: 30px;
+    width: 80px;
+    font-size: 40px;
+    grid-row: 1/4;
+    align-self: center;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
-div#calendar {
+#calendar {
     color: black;
-    display: flex;
-    align-items: flex-start;
 }
 
 .right-side {
@@ -617,10 +611,11 @@ ul.calendar-month {
 }
 
 ul.calendar-month li {
-    font-size: 10px;
+    font-size: 8px;
     text-transform: uppercase;
-    width: 80px;
     text-align: center;
+    cursor: pointer;
+    margin-top: 20px;
 }
 
 ul.calendar-month li.active {
@@ -648,9 +643,8 @@ ul.calendar-week li {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 80px;
     text-align: center;
-    margin: 0 auto;
+    cursor: pointer;
 }
 
 .calendar-day-list {
@@ -671,11 +665,11 @@ ul.calendar-days {
 
 ul.calendar-days li {
     height: 50px;
-    width: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+    cursor: pointer;
 }
 
 ul.calendar-days li.selected-day {
@@ -744,10 +738,9 @@ ul.calendar-days li.another-month{
     display: none;
     margin-top: 5px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     padding: 5px;
-    background-color: #0c7e83;
-    color: white;
+    color: black;
     font-size: 13px;
     opacity: 0;
     cursor: pointer;
@@ -755,4 +748,5 @@ ul.calendar-days li.another-month{
 
 .description__collapse i {
     font-size: 14px;
+    margin-left: 10px;
 }
